@@ -15,7 +15,7 @@ const AssessmentItem = ({
 }) => {
   return (
     <Link
-      to={`/assessment/practice/${id}`}
+      to={`/assessment/start/${id}`}
       className={`p-4 rounded-md bg-white flex items-center justify-between max-w-3xl border-b border-gray-200 hover:bg-primary hover:text-white transition-colors gap-4`}
     >
       <p className="font-medium text-base line-clamp-2">{title}</p>

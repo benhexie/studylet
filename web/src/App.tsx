@@ -12,6 +12,8 @@ import Assessments from "./pages/app/assessments";
 import Redirects from "./components/Redirects";
 import Upload from "./pages/app/assessment/upload";
 import Practice from "./pages/app/assessment/practice";
+import Start from "./pages/app/assessment/start";
+import Assessment from "./pages/app/assessment";
 
 function App() {
   return (
@@ -30,10 +32,11 @@ function App() {
           <Route path="assessments" element={<Assessments />} />
           <Route path="*" element={<Redirects to="/app/dashboard" />} />
         </Route>
-        <Route path="/assessment">
+        <Route path="/assessment" element={<Assessment />}>
           <Route path="upload" element={<Upload />} />
-          <Route path="practice" element={<Practice />} />
+          <Route path="start/:id" element={<Start />} />
         </Route>
+        <Route path="/assessment/practice/:id" element={<Practice />} />
       </Routes>
     </Router>
   );
