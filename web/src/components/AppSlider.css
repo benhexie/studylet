@@ -1,0 +1,7 @@
+.app__slider__item {
+  @apply py-4 flex items-center gap-2;
+}
+
+.app__slider__item.active {
+  @apply text-primary;
+}

@@ -1,0 +1,11 @@
+.nav__link__container {
+  @apply flex gap-1;
+}
+
+.nav__link {
+  @apply transition-colors;
+}
+
+.nav__link.active {
+  @apply text-primary;
+}
