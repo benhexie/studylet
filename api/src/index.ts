@@ -34,6 +34,9 @@ app.use((req, res, next) => {
 });
 
 // Routes
+app.get('/', (req, res) => {
+  res.send('Hello from Studylet!');
+});
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/assessments', assessmentRoutes);
