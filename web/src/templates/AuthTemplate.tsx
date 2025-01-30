@@ -6,12 +6,14 @@ const AuthTemplate = ({
   ctaButtonText,
   onClickCTAButton,
   redirectText,
+  isLoading = false,
 }: {
   title: string;
   children?: ReactNode;
   ctaButtonText: string;
   onClickCTAButton?: () => Promise<void>;
   redirectText: (textStyle: string, linkStyle: string) => ReactNode;
+  isLoading?: boolean;
 }) => {
   return (
     <div className="w-full flex flex-col gap-4">
@@ -22,9 +24,18 @@ const AuthTemplate = ({
       {children}
       <button
         onClick={onClickCTAButton}
-        className="p-4 w-full bg-primary text-white rounded-lg"
+        disabled={isLoading}
+        className={`p-4 w-full rounded-lg flex items-center justify-center ${
+          isLoading 
+            ? 'bg-primary/70 cursor-not-allowed' 
+            : 'bg-primary hover:bg-primary/90'
+        } text-white transition-colors`}
       >
-        {ctaButtonText}
+        {isLoading ? (
+          <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+        ) : (
+          ctaButtonText
+        )}
       </button>
       {redirectText("w-fit self-center", "font-medium text-blue-600")}
     </div>

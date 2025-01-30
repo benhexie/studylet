@@ -1,20 +1,23 @@
 import React from "react";
-import AppNav from "../../components/AppNav";
-import AppSlider from "../../components/AppSlider";
 import { Outlet } from "react-router-dom";
+import AppSlider from "../../components/AppSlider";
+import DashboardNav from "../../components/DashboardNav";
+import { SearchProvider } from "../../contexts/SearchContext";
 
-const App = () => {
+const MainApp = () => {
   return (
-    <div className="flex min-h-screen">
-      <AppSlider />
-      <div className="flex flex-col flex-1 bg-gray-50">
-        <AppNav />
-        <div className="flex-1 p-8 pb-0">
-          <Outlet />
+    <SearchProvider>
+      <div className="flex min-h-screen bg-gray-50">
+        <AppSlider />
+        <div className="flex-1">
+          <DashboardNav />
+          <main className="p-8">
+            <Outlet />
+          </main>
         </div>
       </div>
-    </div>
+    </SearchProvider>
   );
 };
 
-export default App;
+export default MainApp;

@@ -1,65 +1,62 @@
 import React from "react";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "./HomeNav.css";
 import Logo from "./Logo";
 
 const HomeNav = () => {
-  const location = useLocation();
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      const headerOffset = 100;
+      const elementPosition = element.offsetTop;
+      const offsetPosition = elementPosition - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
+    }
+  };
 
   return (
-    <div className="p-8 flex gap-4 items-center justify-between">
+    <div className="p-8 flex gap-4 items-center justify-between sticky top-0 bg-white/80 backdrop-blur-sm z-50">
       <Logo />
       <ul className="flex items-center gap-4">
         <li className="nav__link__container">
-          <NavLink
-            to={"#"}
-            end
-            className={() => {
-              let classstr = "nav__link";
-              if (location.hash === "") classstr += " active";
-              return classstr;
-            }}
+          <button
+            onClick={() => scrollToSection('home')}
+            className="nav__link hover:text-primary"
           >
             Home
-          </NavLink>
+          </button>
         </li>
         <li className="nav__link__container">
-          <NavLink
-            to={"#features"}
-            end
-            className={() => {
-              let classstr = "nav__link";
-              if (location.hash === "#features") classstr += " active";
-              return classstr;
-            }}
+          <button
+            onClick={() => scrollToSection('features')}
+            className="nav__link hover:text-primary"
           >
             Features
-          </NavLink>
+          </button>
         </li>
         <li className="nav__link__container">
-          <NavLink
-            to={"#benefits"}
-            end
-            className={() => {
-              let classstr = "nav__link";
-              if (location.hash === "#benefits") classstr += " active";
-              return classstr;
-            }}
+          <button
+            onClick={() => scrollToSection('benefits')}
+            className="nav__link hover:text-primary"
           >
             Benefits
-          </NavLink>
+          </button>
         </li>
       </ul>
       <div className="flex items-center gap-4">
         <Link
           to={"/auth/login"}
-          className="p-4 pt-2 pb-2 border border-primary hover:bg-gray-500 hover:border-0 hover:text-white transition-colors"
+          className="px-6 py-2 rounded-lg border-2 border-primary text-primary hover:bg-primary hover:text-white transition-all"
         >
           Sign in
         </Link>
         <Link
           to={"/auth/register"}
-          className="p-4 pt-2 pb-2 border bg-primary text-white hover:bg-gray-500 transition-colors"
+          className="px-6 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition-all"
         >
           Create free account
         </Link>

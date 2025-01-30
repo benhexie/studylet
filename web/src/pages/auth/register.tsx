@@ -1,109 +1,83 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import AuthTemplate from "../../templates/AuthTemplate";
-import CustomInput from "../../components/CustomInput";
-import { Link } from "react-router-dom";
+import { useRegisterMutation } from "../../store/api/authApi";
+import { toast } from "react-toastify";
 
 const Register = () => {
-  const [details, setDetails] = useState({
-    firstname: "",
-    lastname: "",
+  const navigate = useNavigate();
+  const [register, { isLoading }] = useRegisterMutation();
+  const [formData, setFormData] = useState({
+    name: "",
     email: "",
     password: "",
   });
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
 
-  const ctaButtonHandler = async () => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleRegister = async () => {
+    if (!formData.name || !formData.email || !formData.password) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
     try {
-    } catch (error: any) {}
+      await register(formData).unwrap();
+      navigate("/app/dashboard");
+    } catch (error: any) {
+      toast.error(error.data?.message || "Registration failed");
+    }
   };
 
   return (
     <AuthTemplate
-      title="Create Your Account"
-      ctaButtonText="Create my account"
-      onClickCTAButton={ctaButtonHandler}
+      title="Create Account"
+      ctaButtonText="Sign Up"
+      onClickCTAButton={handleRegister}
+      isLoading={isLoading}
       redirectText={(textStyle, linkStyle) => (
         <p className={textStyle}>
           Already have an account?{" "}
-          <Link className={linkStyle} to={"/auth/login"}>
-            Login
+          <Link to="/auth/login" className={linkStyle}>
+            Sign in
           </Link>
         </p>
       )}
     >
-      <div className="flex gap-4">
-        <CustomInput
-          label="First name"
-          required
-          placeholder="Ex: John"
-          value={details.firstname}
-          onChange={(e) =>
-            setDetails((prev) => ({ ...prev, firstname: e.target.value }))
-          }
-          autoComplete="given-name"
+      <div className="flex flex-col gap-4">
+        <input
+          type="text"
+          name="name"
+          placeholder="Full Name"
+          value={formData.name}
+          onChange={handleChange}
+          disabled={isLoading}
+          className="p-4 rounded-lg border border-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
         />
-        <CustomInput
-          label="Last name"
-          required
-          placeholder="Ex: Doe"
-          value={details.lastname}
-          onChange={(e) =>
-            setDetails((prev) => ({ ...prev, lastname: e.target.value }))
-          }
-          autoComplete="family-name"
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={handleChange}
+          disabled={isLoading}
+          className="p-4 rounded-lg border border-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={formData.password}
+          onChange={handleChange}
+          disabled={isLoading}
+          className="p-4 rounded-lg border border-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
         />
       </div>
-      <CustomInput
-        label="Email Address"
-        required
-        placeholder="Ex: john@example.com"
-        value={details.email}
-        type="email"
-        onChange={(e) =>
-          setDetails((prev) => ({ ...prev, email: e.target.value }))
-        }
-      />
-      <CustomInput
-        label="New Password"
-        required
-        placeholder="Min. 8 characters"
-        value={details.password}
-        type={showPassword ? "text" : "password"}
-        onChange={(e) =>
-          setDetails((prev) => ({ ...prev, password: e.target.value }))
-        }
-      />
-      <CustomInput
-        label="Confirm Password"
-        required
-        placeholder="Min. 8 characters"
-        value={confirmPassword}
-        type={showPassword ? "text" : "password"}
-        onChange={(e) => setConfirmPassword(e.target.value)}
-      />
-      <div className="flex items-center justify-between w-full">
-        <label
-          htmlFor="show-password"
-          className="flex items-center gap-2 select-none"
-        >
-          <input
-            type="checkbox"
-            name="show-password"
-            id="show-password"
-            checked={showPassword}
-            onChange={(e) => setShowPassword(e.target.checked)}
-          />
-          Show Password
-        </label>
-      </div>
-      <p>
-        By creating an account, you agree to our{" "}
-        <Link className="text-blue-600" to="#">
-          Terms and Conditions
-        </Link>
-        . You may receive SMS notifications from us and can opt out at any time.
-      </p>
     </AuthTemplate>
   );
 };

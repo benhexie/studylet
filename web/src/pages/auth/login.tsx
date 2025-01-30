@@ -1,68 +1,80 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import AuthTemplate from "../../templates/AuthTemplate";
-import CustomInput from "../../components/CustomInput";
-import { Link } from "react-router-dom";
+import { useLoginMutation } from "../../store/api/authApi";
+import { toast } from "react-toastify";
 
 const Login = () => {
-  const [details, setDetails] = useState({
+  const navigate = useNavigate();
+  const [login, { isLoading }] = useLoginMutation();
+  const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const [showPassword, setShowPassword] = useState(false);
 
-  const ctaButtonHandler = async () => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleLogin = async () => {
+    if (!formData.email || !formData.password) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
     try {
-    } catch (error: any) {}
+      await login(formData).unwrap();
+      navigate("/app/dashboard");
+    } catch (error: any) {
+      toast.error(error.data?.message || "Login failed");
+    }
   };
 
   return (
     <AuthTemplate
-      title="Log Into Your Account"
-      ctaButtonText="Log into my account"
-      onClickCTAButton={ctaButtonHandler}
+      title="Welcome Back"
+      ctaButtonText="Sign In"
+      onClickCTAButton={handleLogin}
+      isLoading={isLoading}
       redirectText={(textStyle, linkStyle) => (
         <p className={textStyle}>
           Don't have an account?{" "}
-          <Link className={linkStyle} to={"/auth/register"}>
-            Register
+          <Link to="/auth/register" className={linkStyle}>
+            Sign up
           </Link>
         </p>
       )}
     >
-      <CustomInput
-        label="Email Address"
-        required
-        placeholder="Ex: john@example.com"
-        value={details.email}
-        type="email"
-        onChange={(e) =>
-          setDetails((prev) => ({ ...prev, email: e.target.value }))
-        }
-      />
-      <CustomInput
-        label="Enter Password"
-        required
-        placeholder="Enter Password"
-        value={details.password}
-        type={showPassword ? "text" : "password"}
-        onChange={(e) =>
-          setDetails((prev) => ({ ...prev, password: e.target.value }))
-        }
-      />
-      <div className="flex items-center justify-between w-full">
-        <label
-          htmlFor="show-password"
-          className="flex items-center gap-2 select-none"
+      <div className="flex flex-col gap-4">
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={handleChange}
+          disabled={isLoading}
+          className="p-4 rounded-lg border border-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={formData.password}
+          onChange={handleChange}
+          disabled={isLoading}
+          className="p-4 rounded-lg border border-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
+        />
+        <Link
+          to="/auth/forgot-password"
+          className={`text-sm text-blue-600 font-medium self-end ${
+            isLoading ? 'pointer-events-none opacity-50' : ''
+          }`}
         >
-          <input
-            type="checkbox"
-            name="show-password"
-            id="show-password"
-            checked={showPassword}
-            onChange={(e) => setShowPassword(e.target.checked)}
-          />
-          Show Password
-        </label>
+          Forgot Password?
+        </Link>
       </div>
     </AuthTemplate>
   );

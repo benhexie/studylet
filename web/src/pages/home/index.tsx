@@ -7,13 +7,15 @@ import HomeFooter from "../../components/HomeFooter";
 
 const Home = () => {
   return (
-    <div className="flex justify-center px-8">
-      <div className="flex flex-col w-full max-w-5xl">
+    <div className="bg-gray-50">
+      <div className="max-w-7xl mx-auto">
         <HomeNav />
-        <Title />
-        <Features />
-        <Benefits />
-        <HomeFooter />
+        <div className="space-y-20 px-8">
+          <Title />
+          <Features />
+          <Benefits />
+          <HomeFooter />
+        </div>
       </div>
     </div>
   );
