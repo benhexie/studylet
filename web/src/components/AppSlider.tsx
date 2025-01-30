@@ -100,11 +100,15 @@ const AppSlider = () => {
             className="flex items-center gap-3 p-4 hover:bg-gray-50 transition-colors"
           >
             <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary">
-              <img
-                src={user?.avatar || "https://via.placeholder.com/200"}
-                alt="Profile"
-                className="w-full h-full object-cover"
-              />
+              {user?.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <MdPerson className="w-full h-full text-gray-400" />
+              )}
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-medium text-gray-900 truncate">

@@ -1,5 +1,5 @@
 import React from 'react';
-import { MdEdit, MdLogout } from 'react-icons/md';
+import { MdEdit, MdLogout, MdPerson } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../../store/slices/authSlice';
@@ -49,11 +49,15 @@ const Profile = () => {
           <div className="p-8 space-y-6">
             <div className="flex items-center gap-6">
               <div className="w-24 h-24 rounded-full border-4 border-primary overflow-hidden">
-                <img
-                  src={user?.avatar || "https://via.placeholder.com/200"}
-                  alt="Profile"
-                  className="w-full h-full object-cover"
-                />
+                {user?.avatar ? (
+                  <img
+                    src={user.avatar}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <MdPerson className="w-full h-full text-gray-400" />
+                )}
               </div>
               <div>
                 <h3 className="text-2xl font-semibold">{user?.name}</h3>
