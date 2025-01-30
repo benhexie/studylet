@@ -30,7 +30,7 @@ Studylet is a web application designed for creating, managing, and practicing as
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/studylet.git
+   git clone https://github.com/benhexie/studylet.git
    cd studylet
    ```
 
