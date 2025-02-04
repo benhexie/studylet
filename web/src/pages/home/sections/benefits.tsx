@@ -4,19 +4,21 @@ const Benefits = () => {
   return (
     <div id="benefits" className="min-h-screen py-20">
       <div className="text-center mb-16">
-        <h2 className="text-4xl font-bold mb-4">Transform Your Study Experience</h2>
+        <h2 className="text-4xl font-bold mb-4">
+          Transform Your Study Experience
+        </h2>
         <p className="text-gray-600 max-w-2xl mx-auto">
           Discover how Studylet can revolutionize your exam preparation
         </p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-12 items-center">
-        <img 
-          src="https://placehold.co/600x400/e6e6e6/1a1a1a?text=Transform+Learning"
-          alt="Benefits illustration" 
-          className="rounded-lg shadow-xl hover:scale-105 transition-transform duration-500"
+        <img
+          src={require("../../../assets/images/pexels-rethaferguson-3059691.jpg")}
+          alt="Benefits illustration"
+          className="rounded-lg shadow-xl max-h-[400px] object-cover w-full object-top hover:scale-105 transition-transform duration-500"
         />
-        
+
         <div className="space-y-8">
           {benefits.map((benefit, index) => (
             <div key={index} className="flex gap-4">
