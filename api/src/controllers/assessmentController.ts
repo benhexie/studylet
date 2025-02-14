@@ -8,8 +8,9 @@ import fs from 'fs/promises';
 import pdf from 'pdf-parse';
 import { generateQuestions } from '../services/openaiService';
 import mongoose from 'mongoose';
+import { IUser } from '../models/User';
 
-export const getAssessments = async (req: Request, res: Response) => {
+export const getAssessments = async (req: Request & { user: IUser }, res: Response) => {
   try {
     // Find assessments that are either public or created by the user
     const assessments = await Assessment.find({
@@ -62,7 +63,7 @@ export const getAssessment = async (req: Request, res: Response) => {
   }
 };
 
-export const uploadAssessment = async (req: Request, res: Response) => {
+export const uploadAssessment = async (req: Request & { user: IUser }, res: Response) => {
   try {
     const { title, subject, questionCount = 20, content } = req.body;
 
@@ -120,7 +121,7 @@ export const getQuestions = async (req: Request, res: Response) => {
   }
 };
 
-export const submitPractice = async (req: Request, res: Response) => {
+export const submitPractice = async (req: Request & { user: IUser }, res: Response) => {
   try {
     const { answers, timeSpent } = req.body;
     const assessment = await Assessment.findById(req.params.id);
@@ -165,7 +166,7 @@ export const submitPractice = async (req: Request, res: Response) => {
   }
 };
 
-export const getPracticeSessions = async (req: Request, res: Response) => {
+export const getPracticeSessions = async (req: Request & { user: IUser }, res: Response) => {
   try {
     const sessions = await PracticeSession.find({ user: req.user._id })
       .populate('assessment', 'title')
@@ -196,7 +197,7 @@ export const getSubjects = async (req: Request, res: Response) => {
   }
 };
 
-export const getResults = async (req: Request, res: Response) => {
+export const getResults = async (req: Request & { user: IUser }, res: Response) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) 
       return res.status(400).json({ message: 'Invalid ID format' });

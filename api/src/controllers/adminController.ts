@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import User from '../models/User';
+import User, { IUser } from '../models/User';
 import Assessment from '../models/Assessment';
 import { generateQuestions } from '../services/openaiService';
 import jwt from 'jsonwebtoken';
@@ -28,7 +28,8 @@ const adminLogin = async (req: Request, res: Response) => {
     // Remove password from response
     const userResponse = {
       id: user._id,
-      name: user.name,
+      firstName: user.firstName,
+      lastName: user.lastName,
       email: user.email,
       role: user.role,
       avatar: user.avatar
@@ -52,7 +53,7 @@ const adminLogin = async (req: Request, res: Response) => {
   }
 };
 
-const createAssessment = async (req: Request, res: Response) => {
+const createAssessment = async (req: Request & { user: IUser }, res: Response) => {
   try {
     const { title, subject, questionCount = 20, content } = req.body;
 

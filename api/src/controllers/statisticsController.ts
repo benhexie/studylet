@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import PracticeSession from '../models/PracticeSession';
 import { Types } from 'mongoose';
+import { IUser } from '../models/User';
 
 // Define interfaces for type safety
 interface IAssessment {
@@ -16,7 +17,7 @@ interface IPracticeSession {
   assessment: IAssessment;
 }
 
-export const getStatistics = async (req: Request, res: Response) => {
+export const getStatistics = async (req: Request & { user: IUser }, res: Response) => {
   try {
     // Get all practice sessions for the user
     const sessions = await PracticeSession.find({ user: req.user._id })

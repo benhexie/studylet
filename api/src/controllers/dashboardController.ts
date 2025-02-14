@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import Assessment from '../models/Assessment';
 import PracticeSession from '../models/PracticeSession';
 import { Document } from 'mongoose';
-import User from '../models/User';
+import User, { IUser } from '../models/User';
 
 // Add interface at the top
 interface PopulatedSession extends Document {
@@ -16,7 +16,7 @@ interface PopulatedSession extends Document {
   completedAt: Date;
 }
 
-export const getDashboardStats = async (req: Request, res: Response) => {
+export const getDashboardStats = async (req: Request & { user: IUser }, res: Response) => {
   try {
     const userId = req.user._id;
 
