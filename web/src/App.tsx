@@ -1,6 +1,11 @@
 // ./src/App.js
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import Home from "./pages/home";
 import Auth from "./pages/auth";
 import Login from "./pages/auth/login";
@@ -18,19 +23,20 @@ import ForgotPassword from "./pages/auth/forgot-password";
 import Results from "./pages/app/assessment/results";
 import EditProfile from "./pages/app/profile/edit";
 import Stats from "./pages/app/stats";
-import { Provider } from 'react-redux';
-import { store } from './store/store';
+import { Provider } from "react-redux";
+import { store } from "./store/store";
 import ProtectedRoute from "./components/ProtectedRoute";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { useSelector } from 'react-redux';
-import { selectIsAuthenticated } from './store/slices/authSlice';
-import AppLayout from './layouts/AppLayout';
-import AdminLogin from './pages/admin/login';
-import AdminDashboard from './pages/admin/dashboard';
-import CreateAssessment from './pages/admin/create-assessment';
-import AdminRoute from './components/AdminRoute';
-import AdminLayout from './layouts/AdminLayout';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useSelector } from "react-redux";
+import { selectIsAuthenticated } from "./store/slices/authSlice";
+import AppLayout from "./layouts/AppLayout";
+import AdminLogin from "./pages/admin/login";
+import AdminDashboard from "./pages/admin/dashboard";
+import CreateAssessment from "./pages/admin/create-assessment";
+import AdminRoute from "./components/AdminRoute";
+import AdminLayout from "./layouts/AdminLayout";
+import ResetPassword from "./pages/auth/reset-password";
 
 const AppRoutes = () => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
@@ -43,16 +49,25 @@ const AppRoutes = () => {
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="forgot-password" element={<ForgotPassword />} />
+        <Route path="reset-password" element={<ResetPassword />} />
       </Route>
-      <Route path="/app" element={<AppLayout />}>
+      <Route
+        path="/app"
+        element={
+          <ProtectedRoute>
+            <AppLayout />
+          </ProtectedRoute>
+        }
+      >
         <Route index element={<Navigate to="/app/dashboard" replace />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="assessments" element={<Assessments />} />
         <Route path="assessment">
           <Route path="upload" element={<Upload />} />
-          <Route path="start/:id" element={<Start />} />
-          <Route path="practice/:id" element={<Practice />} />
-          <Route path=":id/results" element={<Results />} />
+          <Route path="start" element={<Start />} />
+          <Route path="practice" element={<Practice />} />
+          <Route path=":id" element={<Assessment />} />
+          <Route path="results" element={<Results />} />
         </Route>
         <Route path="profile" element={<Profile />} />
         <Route path="profile/edit" element={<EditProfile />} />
@@ -64,11 +79,14 @@ const AppRoutes = () => {
           <Route element={<AdminLayout />}>
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="assessments/create" element={<CreateAssessment />} />
+            <Route path="create-assessment" element={<CreateAssessment />} />
           </Route>
         </Route>
       </Route>
-      <Route path="*" element={<Navigate to={isAuthenticated ? "/app" : "/"} />} />
+      <Route
+        path="*"
+        element={<Navigate to={isAuthenticated ? "/app" : "/"} />}
+      />
     </Routes>
   );
 };

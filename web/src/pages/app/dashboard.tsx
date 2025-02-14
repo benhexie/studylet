@@ -12,9 +12,10 @@ import {
   Title,
   Tooltip,
   Legend,
-} from 'chart.js';
-import { useSelector } from 'react-redux';
-import { selectUser } from '../../store/slices/authSlice';
+} from "chart.js";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../store/slices/authSlice";
+import { useGetCurrentUserQuery } from "../../store/api/authApi";
 
 ChartJS.register(
   CategoryScale,
@@ -29,6 +30,7 @@ ChartJS.register(
 const Dashboard = () => {
   const { data: stats, isLoading } = useGetDashboardStatsQuery();
   const user = useSelector(selectUser);
+  const { data: currentUser } = useGetCurrentUserQuery();
 
   if (isLoading) {
     return (
@@ -43,7 +45,7 @@ const Dashboard = () => {
       {/* Welcome Section */}
       <div className="bg-white rounded-lg shadow p-4 md:p-6">
         <h1 className="text-xl md:text-2xl font-semibold text-gray-800">
-          Welcome back, {user?.name}!
+          Welcome back, {user?.firstName}!
         </h1>
         <p className="mt-2 text-gray-600">
           Here's an overview of your learning progress
@@ -80,14 +82,15 @@ const Dashboard = () => {
         <div className="h-[300px] md:h-[400px]">
           <Line
             data={{
-              labels: stats?.subjectPerformance?.map(p => p.subject) || [],
+              labels: stats?.subjectPerformance?.map((p) => p.subject) || [],
               datasets: [
                 {
-                  label: 'Average Score',
-                  data: stats?.subjectPerformance?.map(p => p.averageScore) || [],
-                  borderColor: 'rgb(59, 130, 246)',
-                  backgroundColor: 'rgba(59, 130, 246, 0.5)',
-                }
+                  label: "Average Score",
+                  data:
+                    stats?.subjectPerformance?.map((p) => p.averageScore) || [],
+                  borderColor: "rgb(59, 130, 246)",
+                  backgroundColor: "rgba(59, 130, 246, 0.5)",
+                },
               ],
             }}
             options={{
@@ -150,16 +153,19 @@ const Dashboard = () => {
   );
 };
 
-const StatsCard = ({ title, value, icon, color }: {
+const StatsCard = ({
+  title,
+  value,
+  icon,
+  color,
+}: {
   title: string;
   value: string | number;
   icon: React.ReactNode;
   color: string;
 }) => (
   <div className="bg-white p-4 md:p-6 rounded-lg shadow flex items-center gap-4">
-    <div className={`${color} text-white p-3 rounded-lg`}>
-      {icon}
-    </div>
+    <div className={`${color} text-white p-3 rounded-lg`}>{icon}</div>
     <div>
       <h3 className="text-sm font-medium text-gray-500">{title}</h3>
       <p className="text-xl md:text-2xl font-semibold">{value}</p>

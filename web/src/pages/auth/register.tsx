@@ -1,17 +1,45 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import AuthTemplate from "../../templates/AuthTemplate";
-import { useRegisterMutation } from "../../store/api/authApi";
+import {
+  useRegisterMutation,
+  useGoogleCallbackMutation,
+} from "../../store/api/authApi";
 import { toast } from "react-toastify";
+import GoogleAuthButton from "../../components/GoogleAuthButton";
 
 const Register = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [register, { isLoading }] = useRegisterMutation();
+  const [googleCallback] = useGoogleCallbackMutation();
   const [formData, setFormData] = useState({
-    name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
   });
+
+  // Handle Google OAuth callback
+  useEffect(() => {
+    const code = searchParams.get("code");
+    if (code) {
+      handleGoogleCallback(code);
+    }
+  }, [searchParams]);
+
+  const handleGoogleCallback = async (code: string) => {
+    try {
+      await googleCallback({ code }).unwrap();
+      navigate("/app/dashboard");
+    } catch (error: any) {
+      toast.error(error.data?.message || "Google signup failed");
+    }
+  };
+
+  const handleGoogleSignup = () => {
+    window.location.href = `${process.env.REACT_APP_API_BASE_URL}/api/auth/google`;
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -21,7 +49,12 @@ const Register = () => {
   };
 
   const handleRegister = async () => {
-    if (!formData.name || !formData.email || !formData.password) {
+    if (
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.email ||
+      !formData.password
+    ) {
       toast.error("Please fill in all required fields");
       return;
     }
@@ -50,15 +83,32 @@ const Register = () => {
       )}
     >
       <div className="flex flex-col gap-4">
-        <input
-          type="text"
-          name="name"
-          placeholder="Full Name"
-          value={formData.name}
-          onChange={handleChange}
-          disabled={isLoading}
-          className="p-4 rounded-lg border border-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
-        />
+        <GoogleAuthButton onClick={handleGoogleSignup} isLoading={isLoading} />
+        <div className="flex items-center gap-4">
+          <div className="flex-1 h-[1px] bg-gray-300" />
+          <span className="text-gray-500">or</span>
+          <div className="flex-1 h-[1px] bg-gray-300" />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <input
+            type="text"
+            name="firstName"
+            placeholder="First Name"
+            value={formData.firstName}
+            onChange={handleChange}
+            disabled={isLoading}
+            className="p-4 rounded-lg border border-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
+          />
+          <input
+            type="text"
+            name="lastName"
+            placeholder="Last Name"
+            value={formData.lastName}
+            onChange={handleChange}
+            disabled={isLoading}
+            className="p-4 rounded-lg border border-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
+          />
+        </div>
         <input
           type="email"
           name="email"

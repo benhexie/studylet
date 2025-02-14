@@ -1,16 +1,17 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Logo = ({
-  to = "/",
-  className = "",
-}: {
-  to?: string;
+interface LogoProps {
   className?: string;
-}) => {
+}
+
+const Logo = ({ className = "" }: LogoProps) => {
   return (
-    <Link to={to}>
-      <h1 className={"text-xl font-bold" + " " + className}>STUDYLET</h1>
+    <Link to="/" className={`flex flex-col items-center ${className}`}>
+      <h1 className="text-3xl font-bold text-primary tracking-wider">
+        STUDYLET
+      </h1>
+      <p className="text-sm text-gray-500 mt-1">Learn Smarter</p>
     </Link>
   );
 };

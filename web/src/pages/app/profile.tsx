@@ -1,14 +1,18 @@
-import React from 'react';
-import { MdEdit, MdLogout, MdPerson } from 'react-icons/md';
-import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { selectUser } from '../../store/slices/authSlice';
-import { useLogoutMutation } from '../../store/api/authApi';
-import { toast } from 'react-toastify';
-import { useGetStatisticsQuery } from '../../store/api/statisticsApi';
+import React from "react";
+import { MdEdit, MdLogout, MdAccountCircle } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  selectUser,
+  logout as logoutAction,
+} from "../../store/slices/authSlice";
+import { useLogoutMutation } from "../../store/api/authApi";
+import { toast } from "react-toastify";
+import { useGetStatisticsQuery } from "../../store/api/statisticsApi";
 
 const Profile = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const user = useSelector(selectUser);
   const [logout] = useLogoutMutation();
   const { data: stats } = useGetStatisticsQuery();
@@ -16,9 +20,11 @@ const Profile = () => {
   const handleLogout = async () => {
     try {
       await logout().unwrap();
-      navigate('/auth/login');
+      dispatch(logoutAction());
+      navigate("/auth/login", { replace: true });
     } catch (error) {
-      toast.error('Failed to logout');
+      console.error("Logout error:", error);
+      toast.error("Failed to logout");
     }
   };
 
@@ -26,7 +32,9 @@ const Profile = () => {
     <div className="max-w-4xl mx-auto">
       <div className="flex flex-col gap-8 mt-10">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-semibold text-gray-800">Profile Settings</h2>
+          <h2 className="text-2xl font-semibold text-gray-800">
+            Profile Settings
+          </h2>
           <div className="flex items-center gap-4">
             <button
               onClick={handleLogout}
@@ -35,8 +43,8 @@ const Profile = () => {
               <MdLogout />
               <span>Log Out</span>
             </button>
-            <button 
-              onClick={() => navigate('/app/profile/edit')}
+            <button
+              onClick={() => navigate("/app/profile/edit")}
               className="px-6 py-3 rounded-lg bg-primary text-white flex items-center gap-2 hover:bg-primary/90 transition-colors"
             >
               <MdEdit />
@@ -48,20 +56,23 @@ const Profile = () => {
         <div className="bg-white rounded-lg shadow">
           <div className="p-8 space-y-6">
             <div className="flex items-center gap-6">
-              <div className="w-24 h-24 rounded-full border-4 border-primary overflow-hidden">
+              <div className="relative w-20 h-20 rounded-full border-2 border-primary overflow-hidden">
+                <div className="absolute border-2 border-white w-full h-full z-10 rounded-full" />
                 {user?.avatar ? (
                   <img
-                    src={user.avatar}
-                    alt="Profile"
                     className="w-full h-full object-cover"
+                    src={user.avatar}
+                    alt="profile"
                   />
                 ) : (
-                  <MdPerson className="w-full h-full text-gray-400" />
+                  <MdAccountCircle className="w-full h-full text-gray-400" />
                 )}
               </div>
               <div>
-                <h3 className="text-2xl font-semibold">{user?.name}</h3>
-                <p className="text-gray-600">{user?.email}</p>
+                <h1 className="text-2xl font-semibold">
+                  {user?.firstName} {user?.lastName}
+                </h1>
+                <p className="text-gray-500">{user?.email}</p>
               </div>
             </div>
 
@@ -86,13 +97,13 @@ const Profile = () => {
             <div className="p-4 bg-gray-50 rounded-lg">
               <p className="text-gray-600 text-sm">Average Score</p>
               <p className="text-2xl font-semibold text-primary">
-                {stats ? `${stats.averageScore.toFixed(1)}%` : '0%'}
+                {stats ? `${stats.averageScore.toFixed(1)}%` : "0%"}
               </p>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg">
               <p className="text-gray-600 text-sm">Study Hours</p>
               <p className="text-2xl font-semibold text-primary">
-                {stats ? `${stats.studyHours}h` : '0h'}
+                {stats ? `${stats.studyHours}h` : "0h"}
               </p>
             </div>
           </div>

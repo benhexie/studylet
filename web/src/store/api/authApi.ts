@@ -1,12 +1,13 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { API_BASE_URL } from '../../config/api';
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { API_BASE_URL } from "../../config/api";
 
 export interface User {
   id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   avatar?: string;
-  role: 'user' | 'admin';
+  role: "user" | "admin";
 }
 
 interface AuthResponse {
@@ -20,7 +21,8 @@ interface LoginCredentials {
 }
 
 interface RegisterCredentials {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
 }
@@ -30,37 +32,65 @@ interface ForgotPasswordResponse {
 }
 
 export const authApi = createApi({
-  reducerPath: 'authApi',
+  reducerPath: "authApi",
   baseQuery: fetchBaseQuery({
     baseUrl: `${API_BASE_URL}/api/auth`,
-    credentials: 'include',
+    credentials: "include",
   }),
   endpoints: (builder) => ({
     login: builder.mutation<AuthResponse, LoginCredentials>({
       query: (credentials) => ({
-        url: '/login',
-        method: 'POST',
+        url: "/login",
+        method: "POST",
         body: credentials,
       }),
     }),
     register: builder.mutation<AuthResponse, RegisterCredentials>({
       query: (credentials) => ({
-        url: '/register',
-        method: 'POST',
+        url: "/register",
+        method: "POST",
         body: credentials,
       }),
     }),
-    forgotPassword: builder.mutation<ForgotPasswordResponse, { email: string }>({
+    forgotPassword: builder.mutation<ForgotPasswordResponse, { email: string }>(
+      {
+        query: (data) => ({
+          url: "/forgot-password",
+          method: "POST",
+          body: data,
+        }),
+      }
+    ),
+    logout: builder.mutation<void, void>({
+      query: () => ({
+        url: "/logout",
+        method: "POST",
+      }),
+    }),
+    googleAuth: builder.mutation<void, void>({
+      query: () => ({
+        url: "/google",
+        method: "GET",
+      }),
+    }),
+    googleCallback: builder.mutation<AuthResponse, { code: string }>({
       query: (data) => ({
-        url: '/forgot-password',
-        method: 'POST',
+        url: "/google/callback",
+        method: "POST",
         body: data,
       }),
     }),
-    logout: builder.mutation<void, void>({
-      query: () => ({
-        url: '/logout',
-        method: 'POST',
+    getCurrentUser: builder.query<User, void>({
+      query: () => "/me",
+    }),
+    resetPassword: builder.mutation<
+      { message: string },
+      { token: string; password: string }
+    >({
+      query: (credentials) => ({
+        url: "/reset-password",
+        method: "POST",
+        body: credentials,
       }),
     }),
   }),
@@ -71,4 +101,8 @@ export const {
   useRegisterMutation,
   useForgotPasswordMutation,
   useLogoutMutation,
-} = authApi; 
+  useGoogleAuthMutation,
+  useGoogleCallbackMutation,
+  useGetCurrentUserQuery,
+  useResetPasswordMutation,
+} = authApi;

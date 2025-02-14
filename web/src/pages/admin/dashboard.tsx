@@ -1,15 +1,25 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useGetAssessmentsQuery, useDeleteAssessmentMutation } from '../../store/api/adminApi';
-import { useGetAdminStatsQuery } from '../../store/api/dashboardApi';
-import { MdAdd, MdAssignment, MdPeople, MdQuiz, MdDelete } from 'react-icons/md';
-import { format } from 'date-fns';
-import { useSelector } from 'react-redux';
-import { selectUser } from '../../store/slices/authSlice';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  useGetAssessmentsQuery,
+  useDeleteAssessmentMutation,
+} from "../../store/api/adminApi";
+import { useGetAdminStatsQuery } from "../../store/api/dashboardApi";
+import {
+  MdAdd,
+  MdAssignment,
+  MdPeople,
+  MdQuiz,
+  MdDelete,
+} from "react-icons/md";
+import { format } from "date-fns";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../store/slices/authSlice";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
-  const { data: assessments, isLoading: loadingAssessments } = useGetAssessmentsQuery();
+  const { data: assessments, isLoading: loadingAssessments } =
+    useGetAssessmentsQuery();
   const { data: stats, isLoading: loadingStats } = useGetAdminStatsQuery();
   const [deleteAssessment] = useDeleteAssessmentMutation();
   const user = useSelector(selectUser);
@@ -19,7 +29,7 @@ const AdminDashboard = () => {
       try {
         await deleteAssessment(id).unwrap();
       } catch (error) {
-        console.error('Failed to delete the assessment:', error);
+        console.error("Failed to delete the assessment:", error);
       }
     }
   };
@@ -32,8 +42,13 @@ const AdminDashboard = () => {
     <div className="p-8">
       {/* Welcome Message */}
       <div className="bg-white p-6 rounded-lg shadow mb-6">
-        <h2 className="text-2xl font-semibold text-gray-800">Welcome back, {user?.name}!</h2>
-        <p className="mt-2 text-gray-600">Here you can manage assessments, view statistics, and oversee user activity.</p>
+        <h2 className="text-2xl font-semibold text-gray-800">
+          Welcome back, {user?.firstName}!
+        </h2>
+        <p className="mt-2 text-gray-600">
+          Here you can manage assessments, view statistics, and oversee user
+          activity.
+        </p>
       </div>
 
       {/* Stats Section */}
@@ -43,7 +58,9 @@ const AdminDashboard = () => {
             <MdAssignment className="text-2xl" />
           </div>
           <div>
-            <h3 className="text-sm font-medium text-gray-500">Total Assessments</h3>
+            <h3 className="text-sm font-medium text-gray-500">
+              Total Assessments
+            </h3>
             <p className="text-2xl font-semibold text-gray-900">
               {stats?.totalAssessments || 0}
             </p>
@@ -54,7 +71,9 @@ const AdminDashboard = () => {
             <MdQuiz className="text-2xl" />
           </div>
           <div>
-            <h3 className="text-sm font-medium text-gray-500">Total Questions</h3>
+            <h3 className="text-sm font-medium text-gray-500">
+              Total Questions
+            </h3>
             <p className="text-2xl font-semibold text-gray-900">
               {stats?.totalQuestions || 0}
             </p>
@@ -77,9 +96,11 @@ const AdminDashboard = () => {
       <div className="bg-white rounded-xl shadow-sm">
         <div className="p-6 border-b border-gray-100">
           <div className="flex justify-between items-center">
-            <h2 className="text-lg font-semibold text-gray-900">Recent Assessments</h2>
+            <h2 className="text-lg font-semibold text-gray-900">
+              Recent Assessments
+            </h2>
             <button
-              onClick={() => navigate('/admin/assessments/create')}
+              onClick={() => navigate("/admin/assessments/create")}
               className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
             >
               <MdAdd />
@@ -123,7 +144,9 @@ const AdminDashboard = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{assessment.subject}</div>
+                      <div className="text-sm text-gray-500">
+                        {assessment.subject}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-500">
@@ -132,7 +155,7 @@ const AdminDashboard = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-500">
-                        {format(new Date(assessment.createdAt), 'MMM d, yyyy')}
+                        {format(new Date(assessment.createdAt), "MMM d, yyyy")}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -154,4 +177,4 @@ const AdminDashboard = () => {
   );
 };
 
-export default AdminDashboard; 
+export default AdminDashboard;
