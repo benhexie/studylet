@@ -1,25 +1,16 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { API_BASE_URL } from "../../config/api";
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  studentId: string;
-  avatar?: string;
-  joinedAt: string;
-}
+import { User } from "./authApi";
 
 interface UpdateProfileRequest {
   firstName: string;
   lastName: string;
-  email: string;
 }
 
 export const userApi = createApi({
   reducerPath: "userApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: `${API_BASE_URL}/api`,
+    baseUrl: `${API_BASE_URL}/api/user`,
     credentials: "include",
   }),
   tagTypes: ["User"],
@@ -34,6 +25,7 @@ export const userApi = createApi({
         method: "PUT",
         body: data,
       }),
+      invalidatesTags: ["User"],
     }),
   }),
 });
