@@ -64,7 +64,7 @@ const AppRoutes = () => {
         <Route path="assessments" element={<Assessments />} />
         <Route path="assessment">
           <Route path="upload" element={<Upload />} />
-          <Route path="start" element={<Start />} />
+          <Route path="start/:id" element={<Start />} />
           <Route path="practice" element={<Practice />} />
           <Route path=":id" element={<Assessment />} />
           <Route path="results" element={<Results />} />

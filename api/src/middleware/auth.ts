@@ -20,6 +20,9 @@ export const auth = async (
   next: NextFunction
 ): Promise<void> => {
   try {
+    console.log("auth body", req.body);
+    console.log("auth headers", req.headers);
+    console.log("auth cookies", req.cookies);
     const token = req.cookies.token;
 
     if (!token) {
