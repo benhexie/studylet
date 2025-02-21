@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import "./HomeNav.css";
 import Logo from "./Logo";
-import { MdMenu, MdClose } from 'react-icons/md';
+import { MdMenu, MdClose } from "react-icons/md";
 
 const HomeNav = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -16,7 +16,7 @@ const HomeNav = () => {
 
       window.scrollTo({
         top: offsetPosition,
-        behavior: "smooth"
+        behavior: "smooth",
       });
       setIsMenuOpen(false);
     }
@@ -26,21 +26,21 @@ const HomeNav = () => {
     <div className="w-full p-4 md:p-8 flex gap-4 items-center justify-between sticky top-0 bg-white/80 backdrop-blur-sm z-50">
       <div className="max-w-7xl mx-auto flex justify-between w-full">
         <Logo />
-        
+
         {/* Mobile Menu Button */}
-        <button 
-          className="md:hidden text-2xl"
+        <button
+          className="min-[860px]:hidden text-2xl"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           {isMenuOpen ? <MdClose /> : <MdMenu />}
         </button>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center justify-between flex-1 ml-8">
+        <div className="hidden min-[860px]:flex items-center justify-between flex-1 ml-8">
           <ul className="flex items-center gap-4">
             <li className="nav__link__container">
               <button
-                onClick={() => scrollToSection('home')}
+                onClick={() => scrollToSection("home")}
                 className="nav__link hover:text-primary"
               >
                 Home
@@ -48,7 +48,7 @@ const HomeNav = () => {
             </li>
             <li className="nav__link__container">
               <button
-                onClick={() => scrollToSection('features')}
+                onClick={() => scrollToSection("features")}
                 className="nav__link hover:text-primary"
               >
                 Features
@@ -56,7 +56,7 @@ const HomeNav = () => {
             </li>
             <li className="nav__link__container">
               <button
-                onClick={() => scrollToSection('benefits')}
+                onClick={() => scrollToSection("benefits")}
                 className="nav__link hover:text-primary"
               >
                 Benefits
@@ -81,11 +81,11 @@ const HomeNav = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="absolute top-full left-0 right-0 bg-white shadow-lg md:hidden p-4">
+          <div className="absolute top-full left-0 right-0 bg-white shadow-lg min-[860px]:hidden p-4">
             <ul className="space-y-4">
               <li>
                 <button
-                  onClick={() => scrollToSection('home')}
+                  onClick={() => scrollToSection("home")}
                   className="w-full text-left py-2 hover:text-primary"
                 >
                   Home
@@ -93,7 +93,7 @@ const HomeNav = () => {
               </li>
               <li>
                 <button
-                  onClick={() => scrollToSection('features')}
+                  onClick={() => scrollToSection("features")}
                   className="w-full text-left py-2 hover:text-primary"
                 >
                   Features
@@ -101,7 +101,7 @@ const HomeNav = () => {
               </li>
               <li>
                 <button
-                  onClick={() => scrollToSection('benefits')}
+                  onClick={() => scrollToSection("benefits")}
                   className="w-full text-left py-2 hover:text-primary"
                 >
                   Benefits
