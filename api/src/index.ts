@@ -24,6 +24,7 @@ app.use(cookieParser());
 // Update the cors configuration
 const allowedOrigins = [
   process.env.CLIENT_URL,
+  "https://studylet.vercel.app",
   "https://studylet-api.vercel.app",
   // Add any other origins you need
 ];
@@ -43,7 +44,12 @@ app.use(
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "Access-Control-Allow-Credentials",
+      "Access-Control-Allow-Origin",
+    ],
   })
 );
 
