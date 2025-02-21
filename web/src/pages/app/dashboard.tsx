@@ -139,7 +139,7 @@ const Dashboard = () => {
                   Score: {session.score.toFixed(1)}%
                 </span>
                 <Link
-                  to={`/app/assessment/${session.id}/results`}
+                  to={`/app/assessment/results/${session.id}`}
                   className="text-sm text-blue-600 hover:text-blue-800"
                 >
                   View Details →

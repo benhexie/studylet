@@ -11,17 +11,17 @@ const practiceSessionSchema = new mongoose.Schema({
     ref: 'Assessment',
     required: true,
   },
-  answers: {
-    type: Map,
-    of: String,
-    required: true,
-  },
   score: {
     type: Number,
     required: true,
   },
   timeSpent: {
     type: String,
+    required: true,
+  },
+  answers: {
+    type: Map,
+    of: Number,
     required: true,
   },
   completedAt: {

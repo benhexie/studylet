@@ -1,5 +1,5 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { API_BASE_URL } from '../../config/api';
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { baseQuery } from './baseQuery';
 
 interface DashboardStats {
   totalAssessments: number;
@@ -26,10 +26,7 @@ interface AdminStats {
 
 export const dashboardApi = createApi({
   reducerPath: 'dashboardApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: `${API_BASE_URL}/api`,
-    credentials: 'include',
-  }),
+  baseQuery,
   tagTypes: ['Dashboard'],
   endpoints: (builder) => ({
     getDashboardStats: builder.query<DashboardStats, void>({

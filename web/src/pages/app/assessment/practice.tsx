@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { BsClockHistory } from 'react-icons/bs';
-import { IoCheckmarkCircle } from 'react-icons/io5';
-import { useGetQuestionsQuery, useSubmitPracticeMutation } from '../../../store/api/assessmentApi';
-import { toast } from 'react-toastify';
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { BsClockHistory } from "react-icons/bs";
+import { IoCheckmarkCircle } from "react-icons/io5";
+import {
+  useGetQuestionsQuery,
+  useSubmitPracticeMutation,
+} from "../../../store/api/assessmentApi";
+import { toast } from "react-toastify";
 
 interface Question {
   id: string;
@@ -15,7 +18,9 @@ interface Question {
 const formatTime = (seconds: number): string => {
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
-  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  return `${mins.toString().padStart(2, "0")}:${secs
+    .toString()
+    .padStart(2, "0")}`;
 };
 
 const Practice = () => {
@@ -24,7 +29,11 @@ const Practice = () => {
   const location = useLocation();
   const timeLimit = location.state?.timeLimit || 30; // default 30 minutes
   const [timeLeft, setTimeLeft] = useState(timeLimit * 60); // convert to seconds
-  const { data: questions = [], isLoading, error } = useGetQuestionsQuery(id || '');
+  const {
+    data: questions = [],
+    isLoading,
+    error,
+  } = useGetQuestionsQuery(id || "");
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [answers, setAnswers] = useState<Record<number, number>>({});
@@ -37,7 +46,7 @@ const Practice = () => {
     }
 
     const timer = setInterval(() => {
-      setTimeLeft(prev => prev - 1);
+      setTimeLeft((prev) => prev - 1);
     }, 1000);
 
     return () => clearInterval(timer);
@@ -61,19 +70,19 @@ const Practice = () => {
 
   const handleOptionSelect = (optionIndex: number) => {
     setSelectedAnswer(optionIndex);
-    setAnswers(prev => ({ ...prev, [currentQuestionIndex]: optionIndex }));
+    setAnswers((prev) => ({ ...prev, [currentQuestionIndex]: optionIndex }));
   };
 
   const handleNext = () => {
     if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(prev => prev + 1);
+      setCurrentQuestionIndex((prev) => prev + 1);
       setSelectedAnswer(answers[currentQuestionIndex + 1] ?? null);
     }
   };
 
   const handlePrevious = () => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(prev => prev - 1);
+      setCurrentQuestionIndex((prev) => prev - 1);
       setSelectedAnswer(answers[currentQuestionIndex - 1] ?? null);
     }
   };
@@ -81,24 +90,24 @@ const Practice = () => {
   const handleSubmit = async () => {
     if (Object.keys(answers).length < questions.length) {
       const confirmed = window.confirm(
-        'You have unanswered questions. Are you sure you want to submit?'
+        "You have unanswered questions. Are you sure you want to submit?"
       );
       if (!confirmed) return;
     }
 
     setIsSubmitting(true);
     try {
-      const timeSpent = formatTime((timeLimit * 60) - timeLeft);
-      await submitPractice({
-        assessmentId: id || '',
+      const timeSpent = formatTime(timeLimit * 60 - timeLeft);
+      const result = await submitPractice({
+        assessmentId: id || "",
         answers,
         timeSpent,
       }).unwrap();
 
-      toast.success('Assessment submitted successfully');
-      navigate(`/app/assessment/${id}/results`);
+      toast.success("Assessment submitted successfully");
+      navigate(`/app/assessment/results/${result._id}`, { replace: true });
     } catch (error) {
-      toast.error('Failed to submit assessment');
+      toast.error("Failed to submit assessment");
       setIsSubmitting(false);
     }
   };
@@ -111,15 +120,25 @@ const Practice = () => {
         {/* Header */}
         <div className="bg-white rounded-xl shadow-sm p-4 mb-8 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <span className="text-gray-600">Question {currentQuestionIndex + 1} of {questions.length}</span>
+            <span className="text-gray-600">
+              Question {currentQuestionIndex + 1} of {questions.length}
+            </span>
             <div className="w-48 h-2 bg-gray-100 rounded-full overflow-hidden">
-              <div 
+              <div
                 className="h-full bg-primary transition-all"
-                style={{ width: `${((currentQuestionIndex + 1) / questions.length) * 100}%` }}
+                style={{
+                  width: `${
+                    ((currentQuestionIndex + 1) / questions.length) * 100
+                  }%`,
+                }}
               />
             </div>
           </div>
-          <div className={`flex items-center gap-2 ${timeLeft < 60 ? 'text-red-500' : 'text-primary'}`}>
+          <div
+            className={`flex items-center gap-2 ${
+              timeLeft < 60 ? "text-red-500" : "text-primary"
+            }`}
+          >
             <BsClockHistory />
             <span className="font-medium">{formatTime(timeLeft)}</span>
           </div>
@@ -137,15 +156,18 @@ const Practice = () => {
                 key={index}
                 onClick={() => handleOptionSelect(index)}
                 className={`w-full p-4 rounded-lg border-2 text-left transition-all flex items-center gap-4
-                  ${selectedAnswer === index 
-                    ? 'border-primary bg-blue-50 text-primary' 
-                    : 'border-gray-200 hover:border-gray-300'
+                  ${
+                    selectedAnswer === index
+                      ? "border-primary bg-blue-50 text-primary"
+                      : "border-gray-200 hover:border-gray-300"
                   }`}
               >
-                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0
-                  ${selectedAnswer === index 
-                    ? 'border-primary' 
-                    : 'border-gray-300'
+                <div
+                  className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0
+                  ${
+                    selectedAnswer === index
+                      ? "border-primary"
+                      : "border-gray-300"
                   }`}
                 >
                   {selectedAnswer === index && (
@@ -164,30 +186,39 @@ const Practice = () => {
             onClick={handlePrevious}
             disabled={currentQuestionIndex === 0}
             className={`px-6 py-3 rounded-lg border-2 border-gray-200 
-              ${currentQuestionIndex === 0 
-                ? 'opacity-50 cursor-not-allowed' 
-                : 'hover:border-primary hover:text-primary'
+              ${
+                currentQuestionIndex === 0
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:border-primary hover:text-primary"
               } transition-colors`}
           >
             Previous
           </button>
-          
+
           {currentQuestionIndex === questions.length - 1 ? (
             <button
               onClick={handleSubmit}
               disabled={isSubmitting}
               className={`px-6 py-3 rounded-lg bg-primary text-white font-medium 
-                ${isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary/90'} 
+                ${
+                  isSubmitting
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-primary/90"
+                } 
                 transition-colors`}
             >
-              {isSubmitting ? 'Submitting...' : 'Submit Assessment'}
+              {isSubmitting ? "Submitting..." : "Submit Assessment"}
             </button>
           ) : (
             <button
               onClick={handleNext}
               disabled={selectedAnswer === null}
               className={`px-6 py-3 rounded-lg bg-primary text-white 
-                ${selectedAnswer === null ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary/90'}
+                ${
+                  selectedAnswer === null
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-primary/90"
+                }
                 transition-colors`}
             >
               Next Question

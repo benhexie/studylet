@@ -4,6 +4,9 @@ import User from "../models/User";
 import { OAuth2Client } from "google-auth-library";
 import { sendResetPasswordEmail } from "../services/emailService";
 import crypto from "crypto";
+import { config } from "dotenv";
+
+config();
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -49,9 +52,10 @@ export const register = async (req: Request, res: Response) => {
     // Set cookie
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: true,
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      
     });
 
     // Return user data (excluding password)
@@ -87,9 +91,10 @@ export const login = async (req: Request, res: Response) => {
     // Set cookie
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: true,
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      
     });
 
     // Return user data (excluding password)
@@ -194,9 +199,10 @@ export const googleCallback = async (
     // Set cookie
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: true,
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      
     });
 
     // Prepare user data (excluding password)

@@ -1,6 +1,6 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { API_BASE_URL } from "../../config/api";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import { User } from "./authApi";
+import { baseQuery } from "./baseQuery";
 
 interface UpdateProfileRequest {
   firstName: string;
@@ -9,14 +9,11 @@ interface UpdateProfileRequest {
 
 export const userApi = createApi({
   reducerPath: "userApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: `${API_BASE_URL}/api/user`,
-    credentials: "include",
-  }),
+  baseQuery,
   tagTypes: ["User"],
   endpoints: (builder) => ({
     getProfile: builder.query<User, void>({
-      query: () => "/user/profile",
+      query: () => "/api/user/profile",
       providesTags: ["User"],
     }),
     updateProfile: builder.mutation<User, UpdateProfileRequest>({

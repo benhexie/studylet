@@ -37,6 +37,7 @@ import CreateAssessment from "./pages/admin/create-assessment";
 import AdminRoute from "./components/AdminRoute";
 import AdminLayout from "./layouts/AdminLayout";
 import ResetPassword from "./pages/auth/reset-password";
+import PracticeSessions from "./pages/app/assessment/sessions";
 
 const AppRoutes = () => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
@@ -65,9 +66,9 @@ const AppRoutes = () => {
         <Route path="assessment">
           <Route path="upload" element={<Upload />} />
           <Route path="start/:id" element={<Start />} />
-          <Route path="practice" element={<Practice />} />
-          <Route path=":id" element={<Assessment />} />
-          <Route path="results" element={<Results />} />
+          <Route path="practice/:id" element={<Practice />} />
+          <Route path=":id/sessions" element={<PracticeSessions />} />
+          <Route path="results/:id" element={<Results />} />
         </Route>
         <Route path="profile" element={<Profile />} />
         <Route path="profile/edit" element={<EditProfile />} />

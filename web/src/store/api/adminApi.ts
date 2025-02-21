@@ -1,6 +1,6 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { API_BASE_URL } from '../../config/api';
-import { User } from './authApi';
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { baseQuery } from "./baseQuery";
+import { User } from "./authApi";
 
 interface LoginCredentials {
   email: string;
@@ -47,11 +47,8 @@ interface Assessment {
 
 export const adminApi = createApi({
   reducerPath: 'adminApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: `${API_BASE_URL}/api/admin`,
-    credentials: 'include',
-  }),
-  tagTypes: ['Admin'],
+  baseQuery,
+  tagTypes: ["Admin"],
   endpoints: (builder) => ({
     adminLogin: builder.mutation<AuthResponse, LoginCredentials>({
       query: (credentials) => ({

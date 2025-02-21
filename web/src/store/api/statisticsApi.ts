@@ -1,5 +1,5 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { API_BASE_URL } from '../../config/api';
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { baseQuery } from "./baseQuery";
 
 interface Statistics {
   completedAssessments: number;
@@ -16,15 +16,12 @@ interface Statistics {
 
 export const statisticsApi = createApi({
   reducerPath: 'statisticsApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: `${API_BASE_URL}/api`,
-    credentials: 'include',
-  }),
-  tagTypes: ['Statistics'],
+  baseQuery,
+  tagTypes: ["Statistics"],
   endpoints: (builder) => ({
     getStatistics: builder.query<Statistics, void>({
-      query: () => '/statistics',
-      providesTags: ['Statistics'],
+      query: () => "/statistics",
+      providesTags: ["Statistics"],
     }),
   }),
 });

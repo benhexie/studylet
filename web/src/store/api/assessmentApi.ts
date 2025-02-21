@@ -1,5 +1,5 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { API_BASE_URL } from '../../config/api';
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { baseQuery } from "./baseQuery";
 
 interface Question {
   _id: string;
@@ -15,7 +15,7 @@ interface Assessment {
   subject: string;
   questions: Question[];
   time: number;
-  difficulty: 'Easy' | 'Medium' | 'Hard';
+  difficulty: "Easy" | "Medium" | "Hard";
   createdBy: string;
   createdAt: string;
   lastAttempt?: string;
@@ -23,7 +23,7 @@ interface Assessment {
 }
 
 interface PracticeSession {
-  id: string;
+  _id: string;
   assessmentId: string;
   score: number;
   timeSpent: string;
@@ -46,60 +46,72 @@ interface AssessmentResult {
 }
 
 export const assessmentApi = createApi({
-  reducerPath: 'assessmentApi',
-  baseQuery: fetchBaseQuery({ 
-    baseUrl: `${API_BASE_URL}/api`,
-    credentials: 'include',
-  }),
-  tagTypes: ['Assessment', 'Practice'],
+  reducerPath: "assessmentApi",
+  baseQuery,
+  tagTypes: ["Assessment", "Practice"],
   endpoints: (builder) => ({
     getAssessments: builder.query<Assessment[], void>({
-      query: () => '/assessments',
-      providesTags: ['Assessment'],
+      query: () => "/assessments",
+      providesTags: ["Assessment"],
     }),
     getAssessment: builder.query<Assessment, string>({
       query: (id) => `/assessments/${id}`,
-      providesTags: (_result, _err, id) => [{ type: 'Assessment', id }],
+      providesTags: (_result, _err, id) => [{ type: "Assessment", id }],
     }),
-    uploadAssessment: builder.mutation<Assessment, {
-      title: string;
-      subject: string;
-      questionCount: number;
-      content: string;
-    }>({
+    uploadAssessment: builder.mutation<
+      Assessment,
+      {
+        title: string;
+        subject: string;
+        questionCount: number;
+        content: string;
+      }
+    >({
       query: (data) => ({
-        url: '/assessments/upload',
-        method: 'POST',
+        url: "/assessments/upload",
+        method: "POST",
         body: data,
       }),
-      invalidatesTags: ['Assessment'],
+      invalidatesTags: ["Assessment"],
     }),
     getQuestions: builder.query<Question[], string>({
       query: (assessmentId) => `/assessments/${assessmentId}/questions`,
     }),
-    submitPractice: builder.mutation<any, { 
-      assessmentId: string;
-      answers: Record<number, number>;
-      timeSpent: string;
-    }>({
+    submitPractice: builder.mutation<
+      PracticeSession & { assessment: Assessment },
+      {
+        assessmentId: string;
+        answers: Record<number, number>;
+        timeSpent: string;
+      }
+    >({
       query: ({ assessmentId, answers, timeSpent }) => ({
         url: `/assessments/${assessmentId}/submit`,
-        method: 'POST',
+        method: "POST",
         body: { answers, timeSpent },
       }),
-      invalidatesTags: ['Assessment'],
+      invalidatesTags: ["Assessment", "Practice"],
     }),
-    getPracticeSessions: builder.query<PracticeSession[], void>({
-      query: () => '/practice-sessions',
-      providesTags: ['Practice'],
+    getPracticeSessions: builder.query<PracticeSession[], string>({
+      query: (assessmentId) => `/assessments/${assessmentId}/sessions`,
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ _id }) => ({
+                type: "Practice" as const,
+                id: _id,
+              })),
+              { type: "Practice", id: "LIST" },
+            ]
+          : [{ type: "Practice", id: "LIST" }],
     }),
     getSubjects: builder.query<string[], void>({
-      query: () => '/assessments/subjects',
-      providesTags: ['Assessment'],
+      query: () => "/assessments/subjects",
+      providesTags: ["Assessment"],
     }),
     getResults: builder.query<AssessmentResult, string>({
       query: (id) => `/assessments/${id}/results`,
-      providesTags: (_result, _err, id) => [{ type: 'Assessment', id }],
+      providesTags: (_result, _err, id) => [{ type: "Assessment", id }],
     }),
   }),
 });
@@ -113,4 +125,4 @@ export const {
   useGetPracticeSessionsQuery,
   useGetSubjectsQuery,
   useGetResultsQuery,
-} = assessmentApi; 
+} = assessmentApi;

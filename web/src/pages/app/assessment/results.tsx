@@ -1,15 +1,16 @@
-import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useGetResultsQuery } from '../../../store/api/assessmentApi';
-import { BsClockHistory } from 'react-icons/bs';
-import { IoCheckmarkCircle, IoCloseCircle } from 'react-icons/io5';
+import React from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useGetResultsQuery } from "../../../store/api/assessmentApi";
+import { BsClockHistory } from "react-icons/bs";
+import { IoCheckmarkCircle, IoCloseCircle } from "react-icons/io5";
+import { MdArrowBack } from "react-icons/md";
 
 const Results = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data: results, isLoading, error } = useGetResultsQuery(id || '');
+  const { data: results, isLoading, error } = useGetResultsQuery(id || "");
 
-  console.log('Results query state:', { results, isLoading, error });
+  console.log("Results query state:", { results, isLoading, error });
 
   if (isLoading) {
     return (
@@ -20,10 +21,13 @@ const Results = () => {
   }
 
   if (error) {
-    console.error('Results error:', error);
+    console.error("Results error:", error);
     return (
       <div className="text-center py-12">
-        <p className="text-red-500">Failed to load results: {(error as any)?.data?.message || 'Unknown error'}</p>
+        <p className="text-red-500">
+          Failed to load results:{" "}
+          {(error as any)?.data?.message || "Unknown error"}
+        </p>
       </div>
     );
   }
@@ -41,11 +45,27 @@ const Results = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto p-8">
+        <div className="flex items-center gap-4 mb-8">
+          <button
+            onClick={() => navigate(-1)}
+            className="p-2 rounded-lg hover:bg-gray-100"
+            title="Back"
+          >
+            <MdArrowBack className="text-2xl" />
+          </button>
+          <div>
+            <h1 className="text-2xl font-semibold">{assessment.title}</h1>
+            <p className="text-gray-500 mt-1">{assessment.subject}</p>
+          </div>
+        </div>
+
         {/* Header */}
         <div className="bg-white rounded-xl shadow-sm p-8 mb-8">
-          <h1 className="text-2xl font-semibold text-gray-800 mb-2">{assessment.title}</h1>
+          <h1 className="text-2xl font-semibold text-gray-800 mb-2">
+            {assessment.title}
+          </h1>
           <p className="text-gray-500">{assessment.subject}</p>
-          
+
           <div className="grid grid-cols-3 gap-6 mt-8">
             <div className="text-center">
               <p className="text-4xl font-bold text-primary mb-2">
@@ -72,12 +92,19 @@ const Results = () => {
         <div className="space-y-6">
           {assessment.questions.map((question, index) => {
             const hasAnswer = index.toString() in practiceSession.answers;
-            const userAnswer = hasAnswer ? parseInt(practiceSession.answers[index.toString()]) : undefined;
-            const correctAnswerIndex = question.options.indexOf(question.correctAnswer);
+            const userAnswer = hasAnswer
+              ? parseInt(practiceSession.answers[index.toString()])
+              : undefined;
+            const correctAnswerIndex = question.options.indexOf(
+              question.correctAnswer
+            );
             const isCorrect = userAnswer === correctAnswerIndex;
 
             return (
-              <div key={question._id} className="bg-white rounded-xl shadow-sm p-8">
+              <div
+                key={question._id}
+                className="bg-white rounded-xl shadow-sm p-8"
+              >
                 <div className="flex items-start justify-between mb-4">
                   <h3 className="text-lg font-medium text-gray-800">
                     Question {index + 1}
@@ -99,22 +126,23 @@ const Results = () => {
 
                 <div className="space-y-3">
                   {question.options.map((option, optionIndex) => {
-                    const isUserAnswer = hasAnswer && optionIndex === userAnswer;
+                    const isUserAnswer =
+                      hasAnswer && optionIndex === userAnswer;
                     const isCorrectAnswer = optionIndex === correctAnswerIndex;
 
-                    let optionStyle = 'border-gray-200';
+                    let optionStyle = "border-gray-200";
                     if (isUserAnswer && !isCorrect) {
-                      optionStyle = 'border-red-500 bg-red-50';
+                      optionStyle = "border-red-500 bg-red-50";
                     }
                     if (isCorrectAnswer) {
-                      optionStyle = 'border-green-500 bg-green-50';
+                      optionStyle = "border-green-500 bg-green-50";
                     }
 
                     return (
                       <div
                         key={optionIndex}
                         className={`p-4 rounded-lg border-2 flex items-center justify-between ${optionStyle} ${
-                          !hasAnswer ? 'opacity-70' : ''
+                          !hasAnswer ? "opacity-70" : ""
                         }`}
                       >
                         <span>{option}</span>
@@ -133,11 +161,13 @@ const Results = () => {
                   <div className="mt-4 p-4 bg-blue-50 rounded-lg">
                     {!hasAnswer && (
                       <p className="text-sm text-yellow-700 mb-2">
-                        <span className="font-medium">Note:</span> This question was not answered.
+                        <span className="font-medium">Note:</span> This question
+                        was not answered.
                       </p>
                     )}
                     <p className="text-sm text-blue-700">
-                      <span className="font-medium">Explanation:</span> {question.explanation}
+                      <span className="font-medium">Explanation:</span>{" "}
+                      {question.explanation}
                     </p>
                   </div>
                 )}
@@ -149,7 +179,7 @@ const Results = () => {
         {/* Actions */}
         <div className="mt-8 flex justify-end">
           <button
-            onClick={() => navigate('/app/assessments')}
+            onClick={() => navigate("/app/assessments")}
             className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
           >
             Back to Assessments
@@ -160,4 +190,4 @@ const Results = () => {
   );
 };
 
-export default Results; 
+export default Results;

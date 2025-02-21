@@ -37,7 +37,7 @@ export const getDashboardStats = async (req: Request & { user: IUser }, res: Res
 
     // Get recent sessions
     const recentSessions = userSessions.slice(0, 5).map(session => ({
-      id: session._id,
+      id: session._id.toString(),
       assessmentTitle: session.assessment.title,
       score: session.score,
       completedAt: session.completedAt,

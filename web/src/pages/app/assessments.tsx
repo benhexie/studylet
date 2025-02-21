@@ -1,16 +1,87 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { MdAssignment, MdSearch } from 'react-icons/md';
-import { useGetAssessmentsQuery } from '../../store/api/assessmentApi';
-import { formatDate } from '../../utils/date';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { MdAssignment, MdSearch, MdHistory, MdPlayArrow } from "react-icons/md";
+import { useGetAssessmentsQuery } from "../../store/api/assessmentApi";
+import { formatDate } from "../../utils/date";
+
+const AssessmentCard = ({
+  assessment,
+  navigate,
+}: {
+  assessment: any;
+  navigate: any;
+}) => (
+  <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:border-primary/30 hover:shadow-md transition-all">
+    <div className="flex items-start justify-between">
+      <div>
+        <h3 className="font-medium text-gray-800 text-lg">
+          {assessment.title}
+        </h3>
+        <p className="text-sm text-gray-500 mt-1">{assessment.subject}</p>
+      </div>
+      <span
+        className={`px-3 py-1 text-xs font-medium rounded-full ${
+          assessment.difficulty === "Easy"
+            ? "bg-green-100 text-green-700"
+            : assessment.difficulty === "Medium"
+            ? "bg-yellow-100 text-yellow-700"
+            : "bg-red-100 text-red-700"
+        }`}
+      >
+        {assessment.difficulty}
+      </span>
+    </div>
+
+    <div className="mt-4 flex items-center gap-4">
+      <div className="flex items-center gap-2 text-sm text-gray-600">
+        <MdAssignment className="text-primary" />
+        <span>{assessment.questions.length} Questions</span>
+      </div>
+    </div>
+
+    <div className="mt-4 pt-4 border-t">
+      <div className="text-sm text-gray-600 mb-4">
+        {assessment.lastAttempt ? (
+          <div className="space-y-1">
+            <p>Last attempt: {formatDate(assessment.lastAttempt)}</p>
+            <p className="font-medium text-primary">
+              Score: {assessment.score?.toFixed(1)}%
+            </p>
+          </div>
+        ) : (
+          "Not attempted yet"
+        )}
+      </div>
+
+      <div className="flex gap-3">
+        <button
+          onClick={() => navigate(`/app/assessment/${assessment._id}/sessions`)}
+          className="flex-1 px-4 py-2.5 text-sm font-medium bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center gap-2"
+        >
+          <MdHistory className="text-lg" />
+          Sessions
+        </button>
+        <button
+          onClick={() => navigate(`/app/assessment/start/${assessment._id}`)}
+          className="flex-1 px-4 py-2.5 text-sm font-medium bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
+        >
+          <MdPlayArrow className="text-lg" />
+          Practice
+        </button>
+      </div>
+    </div>
+  </div>
+);
 
 const Assessments = () => {
   const { data: assessments, isLoading } = useGetAssessmentsQuery();
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
-  const filteredAssessments = assessments?.filter(assessment => 
-    assessment.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    assessment.subject.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredAssessments = assessments?.filter(
+    (assessment) =>
+      assessment.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      assessment.subject.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (isLoading) {
@@ -50,61 +121,11 @@ const Assessments = () => {
         {/* Assessment List */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredAssessments?.map((assessment) => (
-            <div
+            <AssessmentCard
               key={assessment._id}
-              className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:border-primary transition-colors"
-            >
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="font-medium text-gray-800">{assessment.title}</h3>
-                  <p className="text-sm text-gray-500">{assessment.subject}</p>
-                </div>
-                <span className={`px-2 py-1 text-xs rounded-full ${
-                  assessment.difficulty === 'Easy' ? 'bg-green-100 text-green-700' :
-                  assessment.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
-                  'bg-red-100 text-red-700'
-                }`}>
-                  {assessment.difficulty}
-                </span>
-              </div>
-
-              <div className="mt-4 flex items-center gap-4">
-                <div className="flex items-center gap-1 text-sm text-gray-500">
-                  <MdAssignment />
-                  <span>{assessment.questions.length} Questions</span>
-                </div>
-              </div>
-
-              <div className="mt-6 flex items-center justify-between">
-                <div className="text-sm text-gray-500">
-                  {assessment.lastAttempt ? (
-                    <>
-                      Last attempt: {formatDate(assessment.lastAttempt)}
-                      <br />
-                      Score: {assessment.score?.toFixed(1)}%
-                    </>
-                  ) : (
-                    'Not attempted'
-                  )}
-                </div>
-
-                {assessment.lastAttempt ? (
-                  <Link
-                    to={`/app/assessment/${assessment._id}/results`}
-                    className="px-4 py-2 text-primary rounded-lg text-sm font-medium hover:bg-primary/10 transition-colors"
-                  >
-                    View Results
-                  </Link>
-                ) : (
-                  <Link
-                    to={`/app/assessment/start/${assessment._id}`}
-                    className="px-4 py-2 bg-primary/10 text-primary rounded-lg text-sm font-medium hover:bg-primary/20 transition-colors"
-                  >
-                    Start Practice
-                  </Link>
-                )}
-              </div>
-            </div>
+              assessment={assessment}
+              navigate={navigate}
+            />
           ))}
         </div>
 

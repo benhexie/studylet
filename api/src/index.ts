@@ -11,7 +11,7 @@ import statisticsRoutes from "./routes/statisticsRoutes";
 import adminRoutes from "./routes/adminRoutes";
 import { errorHandler } from "./middleware/errorHandler";
 import passport from "./config/passport";
-
+import morgan from "morgan";
 dotenv.config({ path: `${__dirname}/../.env` });
 
 const app = express();
@@ -22,7 +22,7 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:3000",
+    origin: process.env.CLIENT_URL,
     credentials: true,
   })
 );
@@ -31,10 +31,7 @@ app.use(
 app.use("/uploads", express.static("uploads"));
 
 // Add this before your routes
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.path}`);
-  next();
-});
+app.use(morgan("dev"));
 
 // Routes
 app.get("/", (req, res) => {
