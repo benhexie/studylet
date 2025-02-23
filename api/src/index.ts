@@ -16,27 +16,13 @@ dotenv.config({ path: `${__dirname}/../.env` });
 
 const app = express();
 
-// Update the cors configuration
-const allowedOrigins = [
-  process.env.CLIENT_URL,
-  "https://studylet.vercel.app",
-  "https://studylet-api.vercel.app",
-  "http://localhost:3000",
-  "http://localhost:5000"
-];
-
-// Configure CORS before other middleware
+// Configure CORS to allow all origins
 // @ts-ignore
 app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (origin && allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  }
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin, Access-Control-Allow-Credentials');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
   
-  // Handle preflight requests
   if (req.method === 'OPTIONS') {
     return res.status(204).end();
   }
@@ -46,7 +32,6 @@ app.use((req, res, next) => {
 // Regular middleware
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
-app.use(cookieParser());
 
 // Serve static files
 app.use("/uploads", express.static("uploads"));

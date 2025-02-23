@@ -65,7 +65,7 @@ const PracticeSessions = () => {
                         <div className="flex items-center gap-2 text-gray-600">
                           <MdScore className="text-lg text-primary" />
                           <span className="font-medium">
-                            Score: {session.score}%
+                            Score: {session.score.toFixed(2)}%
                           </span>
                         </div>
                         <div className="flex items-center gap-2 text-gray-600">

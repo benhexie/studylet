@@ -20,16 +20,17 @@ export const auth = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const token = req.cookies.token;
-
-    if (!token) {
+    const authHeader = req.headers.authorization;
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
       res.status(401).json({ message: "Authentication required" });
       return;
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
+    
     const user = await User.findById(decoded.userId).select("-password");
-
     if (!user) {
       res.status(401).json({ message: "User not found" });
       return;
