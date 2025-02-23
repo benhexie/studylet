@@ -19,25 +19,12 @@ const Profile = () => {
 
   const handleLogout = async () => {
     try {
-      // Clear localStorage first
-      localStorage.removeItem('auth');
-      
-      // Call the logout endpoint
       await logout().unwrap();
-      
-      // Clear Redux state
       dispatch(logoutAction());
-      
-      // Navigate to login page
       navigate("/auth/login", { replace: true });
     } catch (error) {
-      // Even if the API call fails, we want to ensure the user is logged out locally
-      localStorage.removeItem('auth');
-      dispatch(logoutAction());
-      navigate("/auth/login", { replace: true });
-      
       console.error("Logout error:", error);
-      toast.error("Error during logout, but you've been logged out locally");
+      toast.error("Failed to logout");
     }
   };
 

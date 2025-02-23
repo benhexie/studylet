@@ -16,12 +16,34 @@ dotenv.config({ path: `${__dirname}/../.env` });
 
 const app = express();
 
-// Configure CORS to allow all origins
-app.use(cors());
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  "https://studylet.vercel.app",
+  "https://studylet-api.vercel.app",
+  "http://localhost:3000",
+  "http://localhost:5000"
+];
 
-// Regular middleware
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (origin && allowedOrigins.indexOf(origin) === -1) {
+        return callback(
+          new Error(
+            `CORS Policy Error - Unauthorized Domain. Origin - ${origin}`,
+          ),
+        );
+      }
+      return callback(null, true);
+    },
+    credentials: true,
+  })
+);
+
+// Other Middlewares
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
+app.use(cookieParser());
 
 // Serve static files
 app.use("/uploads", express.static("uploads"));
