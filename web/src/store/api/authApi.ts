@@ -37,14 +37,14 @@ export const authApi = createApi({
   endpoints: (builder) => ({
     login: builder.mutation<AuthResponse, LoginCredentials>({
       query: (credentials) => ({
-        url: "/login",
+        url: "/auth/login",
         method: "POST",
         body: credentials,
       }),
     }),
     register: builder.mutation<AuthResponse, RegisterCredentials>({
       query: (credentials) => ({
-        url: "/register",
+        url: "/auth/register",
         method: "POST",
         body: credentials,
       }),
@@ -52,7 +52,7 @@ export const authApi = createApi({
     forgotPassword: builder.mutation<ForgotPasswordResponse, { email: string }>(
       {
         query: (data) => ({
-          url: "/forgot-password",
+          url: "/auth/forgot-password",
           method: "POST",
           body: data,
         }),
@@ -60,32 +60,32 @@ export const authApi = createApi({
     ),
     logout: builder.mutation<void, void>({
       query: () => ({
-        url: "/logout",
+        url: "/auth/logout",
         method: "POST",
       }),
     }),
     googleAuth: builder.mutation<void, void>({
       query: () => ({
-        url: "/google",
+        url: "/auth/google",
         method: "GET",
       }),
     }),
     googleCallback: builder.mutation<AuthResponse, { code: string }>({
       query: (data) => ({
-        url: "/google/callback",
+        url: "/auth/google/callback",
         method: "POST",
         body: data,
       }),
     }),
     getCurrentUser: builder.query<User, void>({
-      query: () => "/me",
+      query: () => "/auth/me",
     }),
     resetPassword: builder.mutation<
       { message: string },
       { token: string; password: string }
     >({
       query: (credentials) => ({
-        url: "/reset-password",
+        url: "/auth/reset-password",
         method: "POST",
         body: credentials,
       }),
