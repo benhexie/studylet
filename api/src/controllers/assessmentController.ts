@@ -91,6 +91,8 @@ export const uploadAssessment = async (
     // Generate questions using OpenAI
     const questions = await generateQuestions(content, parseInt(questionCount));
 
+    console.log(questions);
+
     // Create assessment without document field
     const assessment = new Assessment({
       title,
