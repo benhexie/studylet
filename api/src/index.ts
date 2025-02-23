@@ -26,12 +26,14 @@ const allowedOrigins = [
   process.env.CLIENT_URL,
   "https://studylet.vercel.app",
   "https://studylet-api.vercel.app",
-  // Add any other origins you need
+  // Add development URLs if needed
+  "http://localhost:3000",
+  "http://localhost:5000"
 ];
 
 app.use(
   cors({
-    origin: (origin, callback) => {
+    origin: function (origin, callback) {
       // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
 
@@ -47,11 +49,21 @@ app.use(
     allowedHeaders: [
       "Content-Type",
       "Authorization",
-      "Access-Control-Allow-Credentials",
+      "X-Requested-With",
+      "Accept",
+      "Origin",
+      "Access-Control-Allow-Headers",
       "Access-Control-Allow-Origin",
+      "Access-Control-Allow-Credentials",
     ],
+    exposedHeaders: ["Set-Cookie"],
+    preflightContinue: true,
+    optionsSuccessStatus: 204,
   })
 );
+
+// Add preflight handling for all routes
+app.options("*", cors());
 
 // Serve static files
 app.use("/uploads", express.static("uploads"));
