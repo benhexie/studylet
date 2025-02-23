@@ -5,6 +5,7 @@
     "build": "tsc"
   },
   "dependencies": {
+    "@langchain/core": "^0.3.40",
     "@langchain/openai": "^0.4.2",
     "@sendgrid/mail": "^8.1.4",
     "bcrypt": "^5.1.1",
