@@ -78,15 +78,15 @@ export const uploadAssessment = async (
       return res.status(400).json({ message: "No content provided" });
     }
 
-    return res.status(201).json({
-      message: "Assessment created successfully",
-      assessment: {
-        id: "123",
-        title: title,
-        subject: subject,
-        questionCount: questionCount,
-      },
-    });
+    // return res.status(201).json({
+    //   message: "Assessment created successfully",
+    //   assessment: {
+    //     id: "123",
+    //     title: title,
+    //     subject: subject,
+    //     questionCount: questionCount,
+    //   },
+    // });
 
     // Generate questions using OpenAI
     const questions = await generateQuestions(content, parseInt(questionCount));
