@@ -24,6 +24,10 @@ const allowedOrigins = [
   "http://localhost:5000"
 ];
 
+// Move passport initialization to the top, before CORS
+app.use(passport.initialize());
+
+// CORS configuration
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -74,5 +78,3 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
-app.use(passport.initialize());
