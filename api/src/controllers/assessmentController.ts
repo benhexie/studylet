@@ -147,16 +147,8 @@ export const submitPractice = async (req: Request, res: Response) => {
       const userAnswer = answers[index.toString()];
       const correctAnswer =
         question.options[question.options.indexOf(question.correctAnswer)];
-
-      console.log(`Question ${index}:`, {
-        userAnswer: question.options[parseInt(userAnswer)],
-        correctAnswer,
-        isCorrect: question.options[parseInt(userAnswer)] === correctAnswer,
-      });
-
-      if (question.options[parseInt(userAnswer)] === correctAnswer) {
+      if (question.options[parseInt(userAnswer)] === correctAnswer) 
         correctAnswers++;
-      }
     });
 
     const calculatedScore =

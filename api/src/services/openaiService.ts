@@ -17,30 +17,43 @@ export const generateQuestions = async (
   questionCount: number = 50
 ): Promise<Question[]> => {
   try {
-    // Initialize text splitter
+    // Initialize text splitter with adjusted chunk size
     const textSplitter = new RecursiveCharacterTextSplitter({
-      chunkSize: 2000,
-      chunkOverlap: 200,
+      chunkSize: 4000, // Increased chunk size since gpt-3.5-turbo-16k can handle larger contexts
+      chunkOverlap: 400,
     });
 
     // Split text into chunks
     const chunks = await textSplitter.createDocuments([content]);
 
-    // Initialize ChatOpenAI
+    // Initialize ChatOpenAI with gpt-3.5-turbo-16k
     const model = new ChatOpenAI({
       apiKey: process.env.OPENAI_API_KEY,
-      modelName: "gpt-4",
-      temperature: 0.7,
+      modelName: "gpt-3.5-turbo-16k",
+      temperature: 0.5, // Reduced temperature for more consistent outputs
     });
 
-    // Create prompt template
+    // Create prompt template with more specific instructions
     const promptTemplate = PromptTemplate.fromTemplate(`
-      Generate {questionCount} multiple choice questions from the following text.
-      For each question, provide 4 options, the correct answer, and a brief explanation.
-      Format each question as a JSON object with properties: text, options (array), correctAnswer, and explanation.
-      Return the questions as a JSON array.
+      You are a professional educator and question generator. Generate {questionCount} high-quality multiple choice questions from the following text.
       
-      Text: {text}
+      Requirements for each question:
+      1. The question should test understanding, not just memorization
+      2. Provide exactly 4 options (A, B, C, D)
+      3. Options should be plausible but clearly distinguishable
+      4. Include a concise but informative explanation for the correct answer
+      5. Ensure all information is accurate based on the provided text
+      
+      Format each question as a JSON object with these exact properties:
+      - text: the question text
+      - options: array of 4 strings (the choices)
+      - correctAnswer: the correct option (exact match with one of the options)
+      - explanation: brief explanation why the answer is correct
+      
+      Return the questions as a valid JSON array.
+      
+      Text to generate questions from:
+      {text}
     `);
 
     // Process each chunk and generate questions
@@ -57,8 +70,13 @@ export const generateQuestions = async (
         text: chunk.pageContent,
       });
 
-      const questions = JSON.parse(result);
-      allQuestions.push(...questions);
+      try {
+        const questions = JSON.parse(result);
+        allQuestions.push(...questions);
+      } catch (parseError) {
+        console.error('Failed to parse questions:', parseError);
+        continue; // Skip this chunk if parsing fails
+      }
     }
 
     // Return only the requested number of questions
