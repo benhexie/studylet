@@ -83,12 +83,12 @@ const Register = () => {
       )}
     >
       <div className="flex flex-col gap-4">
-        <GoogleAuthButton onClick={handleGoogleSignup} isLoading={isLoading} />
+        {/* <GoogleAuthButton onClick={handleGoogleSignup} isLoading={isLoading} />
         <div className="flex items-center gap-4">
           <div className="flex-1 h-[1px] bg-gray-300" />
           <span className="text-gray-500">or</span>
           <div className="flex-1 h-[1px] bg-gray-300" />
-        </div>
+        </div> */}
         <div className="grid grid-cols-2 gap-4">
           <input
             type="text"
