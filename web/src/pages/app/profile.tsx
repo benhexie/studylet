@@ -1,5 +1,5 @@
 import React from "react";
-import { MdEdit, MdLogout, MdAccountCircle } from "react-icons/md";
+import { MdEdit, MdLogout, MdPerson } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -65,7 +65,7 @@ const Profile = () => {
                     alt="profile"
                   />
                 ) : (
-                  <MdAccountCircle className="w-full h-full text-gray-400" />
+                  <MdPerson className="w-full h-full text-gray-400" />
                 )}
               </div>
               <div>

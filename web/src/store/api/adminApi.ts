@@ -52,24 +52,24 @@ export const adminApi = createApi({
   endpoints: (builder) => ({
     adminLogin: builder.mutation<AuthResponse, LoginCredentials>({
       query: (credentials) => ({
-        url: '/login',
+        url: '/admin/login',
         method: 'POST',
         body: credentials,
       }),
     }),
     createAssessment: builder.mutation<AssessmentResponse, CreateAssessmentPayload>({
       query: (data) => ({
-        url: '/assessments',
+        url: '/admin/assessments',
         method: 'POST',
         body: data,
       }),
     }),
     getAssessments: builder.query<Assessment[], void>({
-      query: () => '/assessments',
+      query: () => '/admin/assessments',
     }),
     deleteAssessment: builder.mutation<void, string>({
       query: (id) => ({
-        url: `/assessments/${id}`,
+        url: `/admin/assessments/${id}`,
         method: 'DELETE',
       }),
     }),

@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { MdOutlineKeyboardArrowLeft } from 'react-icons/md';
-import { FiUploadCloud } from 'react-icons/fi';
-import { useUploadAssessmentMutation, useGetSubjectsQuery } from '../../../store/api/assessmentApi';
-import { toast } from 'react-toastify';
-import { Combobox } from '@headlessui/react';
-import useScript from '../../../hooks/useScript';
-import { MdCloudUpload, MdDescription } from 'react-icons/md';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { FiUploadCloud } from "react-icons/fi";
+import {
+  useUploadAssessmentMutation,
+  useGetSubjectsQuery,
+} from "../../../store/api/assessmentApi";
+import { toast } from "react-toastify";
+import { Combobox } from "@headlessui/react";
+import useScript from "../../../hooks/useScript";
+import { MdCloudUpload, MdDescription } from "react-icons/md";
 
 interface UploadForm {
   title: string;
@@ -20,85 +22,103 @@ const Upload = () => {
   const navigate = useNavigate();
   const [uploadAssessment, { isLoading }] = useUploadAssessmentMutation();
   const { data: existingSubjects = [] } = useGetSubjectsQuery();
-  const [query, setQuery] = useState('');
-  
+  const [query, setQuery] = useState("");
+
   const [formData, setFormData] = useState<UploadForm>({
-    title: '',
-    subject: '',
+    title: "",
+    subject: "",
     questionCount: 20,
     document: null,
-    text: '',
+    text: "",
   });
   const [isExtracting, setIsExtracting] = useState(false);
 
   // Load PDF.js scripts
-  useScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js');
-  useScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.worker.min.js');
+  useScript(
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"
+  );
+  useScript(
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.worker.min.js"
+  );
 
-  const filteredSubjects = query === ''
-    ? existingSubjects
-    : existingSubjects.filter((subject: string) =>
-        subject.toLowerCase().includes(query.toLowerCase())
-      );
+  const filteredSubjects =
+    query === ""
+      ? existingSubjects
+      : existingSubjects.filter((subject: string) =>
+          subject.toLowerCase().includes(query.toLowerCase())
+        );
 
-  const extractTextFromPdf = async (file: File): Promise<string> => {
+  const extractTextFromFile = async (file: File): Promise<string> => {
     try {
-      if (!(window as any).pdfjsLib) {
-        throw new Error('PDF.js library not loaded');
+      if (file.type === "text/plain") {
+        return await file.text();
       }
 
-      const arrayBuffer = await file.arrayBuffer();
-      const pdf = await (window as any).pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-      let fullText = '';
+      if (file.type === "application/pdf") {
+        if (!(window as any).pdfjsLib) {
+          throw new Error("PDF.js library not loaded");
+        }
 
-      for (let i = 1; i <= pdf.numPages; i++) {
-        const page = await pdf.getPage(i);
-        const textContent = await page.getTextContent();
-        const pageText = textContent.items
-          .map((item: any) => item.str)
-          .join(' ');
-        fullText += pageText + '\n';
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await (window as any).pdfjsLib.getDocument({
+          data: arrayBuffer,
+        }).promise;
+        let fullText = "";
+
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const textContent = await page.getTextContent();
+          const pageText = textContent.items
+            .map((item: any) => item.str)
+            .join(" ");
+          fullText += pageText + "\n";
+        }
+
+        return fullText;
       }
 
-      return fullText;
+      throw new Error("Unsupported file type");
     } catch (error) {
-      console.error('PDF extraction error:', error);
-      throw new Error('Failed to extract text from PDF');
+      console.error("Text extraction error:", error);
+      throw new Error("Failed to extract text from file");
     }
   };
 
   const handleDrop = async (e: React.DragEvent<HTMLLabelElement>) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
-    if (file && file.type === 'application/pdf') {
+    if (
+      file &&
+      (file.type === "application/pdf" || file.type === "text/plain")
+    ) {
       setIsExtracting(true);
       try {
-        const text = await extractTextFromPdf(file);
-        setFormData(prev => ({ ...prev, document: file, text }));
+        const text = await extractTextFromFile(file);
+        setFormData((prev) => ({ ...prev, document: file, text }));
       } catch (error) {
-        toast.error('Failed to extract text from PDF');
+        toast.error("Failed to extract text from file");
       } finally {
         setIsExtracting(false);
       }
     } else {
-      toast.error('Please upload a PDF file');
+      toast.error("Please upload a PDF or TXT file");
     }
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.type !== 'application/pdf') {
-        toast.error('Please upload a PDF file');
+      if (file.type !== "application/pdf" && file.type !== "text/plain") {
+        toast.error("Please upload a PDF or TXT file");
         return;
       }
-      
+
       setIsExtracting(true);
       try {
-        const text = await extractTextFromPdf(file);
-        setFormData(prev => ({ ...prev, document: file, text }));
+        const text = await extractTextFromFile(file);
+        setFormData((prev) => ({ ...prev, document: file, text }));
       } catch (error) {
-        toast.error('Failed to extract text from PDF');
+        toast.error("Failed to extract text from file");
       } finally {
         setIsExtracting(false);
       }
@@ -108,7 +128,7 @@ const Upload = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title || !formData.subject || !formData.text) {
-      toast.error('Please fill in all required fields');
+      toast.error("Please fill in all required fields");
       return;
     }
 
@@ -121,10 +141,10 @@ const Upload = () => {
       };
 
       await uploadAssessment(payload).unwrap();
-      toast.success('Document uploaded successfully');
-      navigate('/app/assessments');
+      toast.success("Document uploaded successfully");
+      navigate("/app/assessments");
     } catch (error: any) {
-      toast.error(error.data?.message || 'Failed to upload document');
+      toast.error(error.data?.message || "Failed to upload document");
     }
   };
 
@@ -148,27 +168,37 @@ const Upload = () => {
         <div className="bg-white shadow rounded-lg p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="title"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Assessment Title
               </label>
-            <input
-              type="text"
+              <input
+                type="text"
                 id="title"
                 value={formData.title}
-                onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, title: e.target.value }))
+                }
                 className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                placeholder="e.g., Chapter 1: Introduction to Biology"
+                placeholder="e.g., Introduction to Biology"
                 required
-            />
-          </div>
+              />
+            </div>
 
             <div>
-              <label htmlFor="subject" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="subject"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Subject
               </label>
               <Combobox
                 value={formData.subject}
-                onChange={(value) => setFormData((prev: any) => ({ ...prev, subject: value }))}
+                onChange={(value) =>
+                  setFormData((prev: any) => ({ ...prev, subject: value }))
+                }
               >
                 <div className="relative">
                   <Combobox.Input
@@ -182,9 +212,15 @@ const Upload = () => {
                       <Combobox.Option
                         key={subject}
                         value={subject}
-                        className={({ selected, active }: { selected: boolean; active: boolean }) =>
-                          `${active ? 'bg-primary text-white' : 'text-gray-900'}
-                          ${selected ? 'font-medium' : 'font-normal'}
+                        className={({
+                          selected,
+                          active,
+                        }: {
+                          selected: boolean;
+                          active: boolean;
+                        }) =>
+                          `${active ? "bg-primary text-white" : "text-gray-900"}
+                          ${selected ? "font-medium" : "font-normal"}
                           cursor-pointer select-none relative py-3 px-4 hover:bg-primary/5 transition-colors`
                         }
                       >
@@ -212,20 +248,26 @@ const Upload = () => {
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
                 className={`mt-2 flex justify-center rounded-lg border-2 border-dashed p-8
-                  ${formData.document ? 'border-primary bg-primary/5' : 'border-gray-300 hover:border-primary'}
+                  ${
+                    formData.document
+                      ? "border-primary bg-primary/5"
+                      : "border-gray-300 hover:border-primary"
+                  }
                   transition-colors cursor-pointer relative`}
               >
-              <input
-                type="file"
+                <input
+                  type="file"
                   className="hidden"
-                accept=".pdf"
-                onChange={handleFileChange}
-              />
+                  accept=".pdf,.txt"
+                  onChange={handleFileChange}
+                />
                 <div className="text-center">
                   {isExtracting ? (
                     <div className="space-y-3">
                       <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
-                      <p className="text-sm text-gray-500">Extracting text from PDF...</p>
+                      <p className="text-sm text-gray-500">
+                        Extracting text from PDF...
+                      </p>
                     </div>
                   ) : formData.document ? (
                     <div className="space-y-3">
@@ -244,7 +286,11 @@ const Upload = () => {
                         type="button"
                         onClick={(e) => {
                           e.preventDefault();
-                          setFormData(prev => ({ ...prev, document: null, text: '' }));
+                          setFormData((prev) => ({
+                            ...prev,
+                            document: null,
+                            text: "",
+                          }));
                         }}
                         className="text-sm text-red-500 hover:text-red-700"
                       >
@@ -259,22 +305,32 @@ const Upload = () => {
                       <p className="mt-4 text-sm text-gray-500">
                         Drag and drop your PDF here, or click to browse
                       </p>
-                      <p className="mt-2 text-xs text-gray-500">PDF files only, up to 10MB</p>
+                      <p className="mt-2 text-xs text-gray-500">
+                        PDF or TXT files only, up to 10MB
+                      </p>
                     </>
                   )}
-              </div>
-            </label>
-          </div>
+                </div>
+              </label>
+            </div>
 
             <div>
-              <label htmlFor="questionCount" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="questionCount"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Number of Questions
               </label>
               <input
                 type="number"
                 id="questionCount"
                 value={formData.questionCount}
-                onChange={(e) => setFormData(prev => ({ ...prev, questionCount: Math.max(1, parseInt(e.target.value)) }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    questionCount: Math.max(1, parseInt(e.target.value)),
+                  }))
+                }
                 className="mt-1 block w-32 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 min="1"
                 max="50"
@@ -288,7 +344,7 @@ const Upload = () => {
             <div className="flex items-center justify-end gap-4">
               <button
                 type="button"
-                onClick={() => navigate('/app/assessments')}
+                onClick={() => navigate("/app/assessments")}
                 className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
               >
                 Cancel
@@ -298,8 +354,8 @@ const Upload = () => {
                 disabled={isLoading || isExtracting || !formData.document}
                 className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isLoading ? 'Creating...' : 'Create Assessment'}
-          </button>
+                {isLoading ? "Creating..." : "Create Assessment"}
+              </button>
             </div>
           </form>
         </div>
