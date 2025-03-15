@@ -31,7 +31,7 @@ const ForgotPassword = () => {
       redirectText={(textStyle, linkStyle) => (
         <p className={textStyle}>
           Remember your password?{" "}
-          <Link to="/auth/login" className={linkStyle}>
+          <Link to="/auth/login" replace className={linkStyle}>
             Sign in
           </Link>
         </p>

@@ -76,7 +76,7 @@ const Register = () => {
       redirectText={(textStyle, linkStyle) => (
         <p className={textStyle}>
           Already have an account?{" "}
-          <Link to="/auth/login" className={linkStyle}>
+          <Link to="/auth/login" replace className={linkStyle}>
             Sign in
           </Link>
         </p>

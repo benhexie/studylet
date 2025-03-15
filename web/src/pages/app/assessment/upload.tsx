@@ -266,7 +266,7 @@ const Upload = () => {
                     <div className="space-y-3">
                       <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
                       <p className="text-sm text-gray-500">
-                        Extracting text from PDF...
+                        Extracting text from File...
                       </p>
                     </div>
                   ) : formData.document ? (

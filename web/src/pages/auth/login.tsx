@@ -113,7 +113,7 @@ const Login = () => {
       redirectText={(textStyle, linkStyle) => (
         <p className={textStyle}>
           Don't have an account?{" "}
-          <Link to="/auth/register" className={linkStyle}>
+          <Link to="/auth/register" replace className={linkStyle}>
             Sign up
           </Link>
         </p>
