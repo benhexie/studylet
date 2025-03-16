@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAdminLoginMutation } from '../../store/api/adminApi';
-import { useSelector, useDispatch } from 'react-redux';
-import { selectUser } from '../../store/slices/authSlice';
-import { setCredentials } from '../../store/slices/authSlice';
-import { toast } from 'react-toastify';
-import { AppDispatch } from '../../store/store';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAdminLoginMutation } from "../../store/api/adminApi";
+import { useSelector, useDispatch } from "react-redux";
+import { selectUser } from "../../store/slices/authSlice";
+import { setCredentials } from "../../store/slices/authSlice";
+import { toast } from "react-toastify";
+import { AppDispatch } from "../../store/store";
+import AuthTemplate from "../../templates/AuthTemplate";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -13,112 +14,86 @@ const AdminLogin = () => {
   const user = useSelector(selectUser);
   const [adminLogin, { isLoading }] = useAdminLoginMutation();
   const [credentials, setLoginCredentials] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
 
   // Redirect if already logged in as admin
   useEffect(() => {
-    if (user?.role === 'admin') {
-      navigate('/admin/dashboard');
+    if (user?.role === "admin") {
+      navigate("/admin/dashboard");
     }
   }, [user, navigate]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  const handleSubmit = async () => {
     if (!credentials.email || !credentials.password) {
-      toast.error('Please fill in all fields');
+      toast.error("Please fill in all fields");
       return;
     }
 
     try {
       const result = await adminLogin(credentials).unwrap();
-      if (!result.user) return toast.error('Invalid admin credentials');
-      if (result.user.role !== 'admin') return toast.error('Invalid admin credentials');
-      
+      if (!result.user) {
+        toast.error("Invalid admin credentials");
+        return;
+      }
+      if (result.user.role !== "admin") {
+        toast.error("Invalid admin credentials");
+        return;
+      }
+
       // Update auth state with proper typing
-      dispatch(setCredentials({
-        user: result.user,
-        token: result.token
-      }));
-      navigate('/admin/dashboard');
+      dispatch(
+        setCredentials({
+          user: result.user,
+          token: result.token,
+        })
+      );
+      navigate("/admin/dashboard");
     } catch (error: any) {
-        console.log(error);
-        
-      toast.error(error.data?.message || 'Failed to login');
+      console.log(error);
+      toast.error(error.data?.message || "Failed to login");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Admin Login
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Access the admin dashboard
-          </p>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm space-y-4">
-            <div>
-              <label htmlFor="email" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
-                placeholder="Email address"
-                value={credentials.email}
-                onChange={(e) => setLoginCredentials(prev => ({ ...prev, email: e.target.value }))}
-                disabled={isLoading}
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
-                placeholder="Password"
-                value={credentials.password}
-                onChange={(e) => setLoginCredentials(prev => ({ ...prev, password: e.target.value }))}
-                disabled={isLoading}
-              />
-            </div>
-          </div>
-
-          <div>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? (
-                <>
-                  <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                    <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  </span>
-                  Signing in...
-                </>
-              ) : (
-                'Sign in'
-              )}
-            </button>
-          </div>
-        </form>
+    <AuthTemplate
+      title="Admin Login"
+      ctaButtonText={isLoading ? "Signing in..." : "Sign in"}
+      onClickCTAButton={handleSubmit}
+      isLoading={isLoading}
+      imageSrc="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+      redirectText={() => null}
+    >
+      <div className="flex flex-col gap-4">
+        <input
+          type="email"
+          name="email"
+          placeholder="Email address"
+          value={credentials.email}
+          onChange={(e) =>
+            setLoginCredentials((prev) => ({ ...prev, email: e.target.value }))
+          }
+          disabled={isLoading}
+          className="p-4 rounded-lg border border-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={credentials.password}
+          onChange={(e) =>
+            setLoginCredentials((prev) => ({
+              ...prev,
+              password: e.target.value,
+            }))
+          }
+          disabled={isLoading}
+          className="p-4 rounded-lg border border-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
+        />
       </div>
-    </div>
+    </AuthTemplate>
   );
 };
 
-export default AdminLogin; 
+export default AdminLogin;

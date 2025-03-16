@@ -110,6 +110,7 @@ const Login = () => {
       ctaButtonText="Sign In"
       onClickCTAButton={handleLogin}
       isLoading={isLoading}
+      imageSrc={require("../../assets/images/login_image.png")}
       redirectText={(textStyle, linkStyle) => (
         <p className={textStyle}>
           Don't have an account?{" "}

@@ -73,6 +73,7 @@ const Register = () => {
       ctaButtonText="Sign Up"
       onClickCTAButton={handleRegister}
       isLoading={isLoading}
+      imageSrc={require("../../assets/images/sign_up.png")}
       redirectText={(textStyle, linkStyle) => (
         <p className={textStyle}>
           Already have an account?{" "}
